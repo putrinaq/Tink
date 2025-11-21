@@ -1,6 +1,5 @@
 ---
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/tink.casa/public_html/
+    - export DEPLOYPATH=/data0/tink.casa/public_html/
     - /bin/rsync -av --delete --exclude='.git' --exclude='.cpanel.yml' ./ $DEPLOYPATH
-
