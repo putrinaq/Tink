@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Header Component – TINK
  * - Dynamic navigation using associative array
@@ -30,10 +31,10 @@ $navItems = [
                 <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 288 149.67">
                     <defs>
                         <style>
-                        .cls-1 {
-                            fill: #fff;
-                            stroke-width: 0px;
-                        }
+                            .cls-1 {
+                                fill: #fff;
+                                stroke-width: 0px;
+                            }
                         </style>
                     </defs>
                     <path class="cls-1"
@@ -67,9 +68,9 @@ $navItems = [
         <!-- Main Navigation -->
         <nav class="main-nav">
             <?php foreach ($navItems as $file => $label): ?>
-            <a href="<?= htmlspecialchars($file) ?>" class="nav-link <?= $currentPage === $file ? 'active' : '' ?>">
-                <?= htmlspecialchars($label) ?>
-            </a>
+                <a href="<?= htmlspecialchars($file) ?>" class="nav-link <?= $currentPage === $file ? 'active' : '' ?>">
+                    <?= htmlspecialchars($label) ?>
+                </a>
             <?php endforeach; ?>
         </nav>
 

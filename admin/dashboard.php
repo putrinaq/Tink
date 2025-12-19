@@ -1,218 +1,192 @@
 <?php
 require_once '../config.php';
+// --- 1. FETCH DATA FOR WIDGETS ---
 
-/* ===============================
-   BASIC ADMIN PROTECTION
-================================ */
-if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'admin') {
-    header("Location: ../login.php");
-    exit;
-}
+// KPI 1: Total Revenue (Successful payments)
+$stmt = $pdo->query("SELECT SUM(PAYMENT_AMOUNT) as total FROM PAYMENT WHERE PAYMENT_STATUS = 'successful'");
+$revenue = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
-/* ===============================
-   DASHBOARD STATISTICS
-================================ */
+// KPI 2: Total Orders
+$stmt = $pdo->query("SELECT COUNT(*) as total FROM `ORDER`");
+$totalOrders = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-// Total products
-$q = $conn->query("SELECT COUNT(*) AS total FROM products");
-$totalProducts = $q->fetch_assoc()['total'];
+// KPI 3: Total Customers
+$stmt = $pdo->query("SELECT COUNT(*) as total FROM CUSTOMER");
+$totalCustomers = $stmt->fetch(PDO::FETCH_ASSOC)['total'];
 
-// Total customers
-$q = $conn->query("SELECT COUNT(*) AS total FROM users WHERE role = 'customer'");
-$totalCustomers = $q->fetch_assoc()['total'];
+// --- 2. FETCH DATA FOR TABLE (Recent Orders) ---
+// We join ORDER -> CART -> CUSTOMER to get names
+$sql = "SELECT 
+            o.ORDER_ID, 
+            c.CUSTOMER_NAME, 
+            c.CUSTOMER_EMAIL, 
+            o.ORDER_TOTALAMOUNT, 
+            o.ORDER_STATUS,
+            o.ORDER_DATE
+        FROM `ORDER` o
+        JOIN CART ca ON o.CART_ID = ca.CART_ID
+        JOIN CUSTOMER c ON ca.CUSTOMER_ID = c.CUSTOMER_ID
+        ORDER BY o.ORDER_DATE DESC 
+        LIMIT 5";
+$recentOrders = $pdo->query($sql)->fetchAll(PDO::FETCH_ASSOC);
 
-// Total orders
-$q = $conn->query("SELECT COUNT(*) AS total FROM orders");
-$totalOrders = $q->fetch_assoc()['total'];
-
-// Total revenue
-$q = $conn->query("
-    SELECT SUM(total_amount) AS revenue 
-    FROM orders 
-    WHERE status != 'cancelled'
-");
-$revenue = $q->fetch_assoc()['revenue'] ?? 0;
-
-/* ===============================
-   RECENT ORDERS
-================================ */
-$recentOrders = $conn->query("
-    SELECT o.id, u.name, o.total_amount, o.status, o.created_at
-    FROM orders o
-    JOIN users u ON o.user_id = u.id
-    ORDER BY o.created_at DESC
-    LIMIT 5
-");
-
-/* ===============================
-   INVENTORY
-================================ */
-$products = $conn->query("
-    SELECT p.id, p.name, p.price, p.stock, c.name AS category
-    FROM products p
-    JOIN categories c ON p.category_id = c.id
-");
-
-/* ===============================
-   TOP CUSTOMERS
-================================ */
-$topCustomers = $conn->query("
-    SELECT u.name, u.email, COUNT(o.id) AS total_orders,
-           SUM(o.total_amount) AS total_spent,
-           MIN(o.created_at) AS join_date
-    FROM users u
-    JOIN orders o ON u.id = o.user_id
-    WHERE u.role = 'customer'
-    GROUP BY u.id
-    ORDER BY total_spent DESC
-    LIMIT 5
-");
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>TINK Admin Dashboard</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../assets/css/dashboard.css" </head>
+    <title>Tink Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href='https://cdn.boxicons.com/3.0.6/fonts/basic/boxicons.min.css' rel='stylesheet'>
+    <link href='https://cdn.boxicons.com/3.0.6/fonts/brands/boxicons-brands.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
 
 <body>
-    <div class="container">
 
-        <!-- SIDEBAR -->
-        <aside class="sidebar">
-            <div class="logo">💎 TINK</div>
-            <ul class="nav-menu">
-                <li><a class="active">Dashboard</a></li>
-                <li><a>Catalog</a></li>
-                <li><a>Orders</a></li>
-                <li><a>Customers</a></li>
-                <li><a>Reports</a></li>
-            </ul>
-        </aside>
-
-        <!-- CONTENT -->
-        <div>
-            <header class="header">
-                <h2>Admin Dashboard</h2>
-                <form action="../actions/logout.php" method="post">
-                    <button class="logout">Logout</button>
-                </form>
-            </header>
-
-            <main class="main">
-
-                <!-- STATS -->
-                <div class="stats">
-                    <div class="card">
-                        <h3>Total Products</h3>
-                        <div class="number"><?= $totalProducts ?></div>
-                    </div>
-                    <div class="card">
-                        <h3>Total Customers</h3>
-                        <div class="number"><?= $totalCustomers ?></div>
-                    </div>
-                    <div class="card">
-                        <h3>Total Orders</h3>
-                        <div class="number"><?= $totalOrders ?></div>
-                    </div>
-                    <div class="card">
-                        <h3>Total Revenue</h3>
-                        <div class="number">RM<?= number_format($revenue, 2) ?></div>
-                    </div>
-                </div>
-
-                <!-- RECENT ORDERS -->
-                <div class="section">
-                    <h3>Recent Orders</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Order ID</th>
-                                <th>Customer</th>
-                                <th>Amount</th>
-                                <th>Date</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($o = $recentOrders->fetch_assoc()): ?>
-                                <tr>
-                                    <td>#<?= $o['id'] ?></td>
-                                    <td><?= htmlspecialchars($o['name']) ?></td>
-                                    <td>RM<?= number_format($o['total_amount'], 2) ?></td>
-                                    <td><?= date('d M Y', strtotime($o['created_at'])) ?></td>
-                                    <td>
-                                        <span class="badge <?= $o['status'] ?>">
-                                            <?= ucfirst($o['status']) ?>
-                                        </span>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- INVENTORY -->
-                <div class="section">
-                    <h3>Inventory</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Category</th>
-                                <th>Price</th>
-                                <th>Stock</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($p = $products->fetch_assoc()): ?>
-                                <tr>
-                                    <td>#<?= $p['id'] ?></td>
-                                    <td><?= htmlspecialchars($p['name']) ?></td>
-                                    <td><?= $p['category'] ?></td>
-                                    <td>RM<?= number_format($p['price'], 2) ?></td>
-                                    <td>
-                                        <span class="badge <?= $p['stock'] <= 10 ? 'low' : 'confirmed' ?>">
-                                            <?= $p['stock'] ?>
-                                        </span>
-                                    </td>
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-                <!-- TOP CUSTOMERS -->
-                <div class="section">
-                    <h3>Top Customers</h3>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>Orders</th>
-                                <th>Total Spent</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php while ($c = $topCustomers->fetch_assoc()): ?>
-                                <tr>
-                                    <td><?= htmlspecialchars($c['name']) ?></td>
-                                    <td><?= htmlspecialchars($c['email']) ?></td>
-                                    <td><?= $c['total_orders'] ?></td>
-                                    <td>RM<?= number_format($c['total_spent'], 2) ?></td>
-                                </tr>
-                            <?php endwhile; ?>
-                        </tbody>
-                    </table>
-                </div>
-
-            </main>
+    <aside class="sidebar">
+        <div class="logo">
+            <h1>Tink</h1>
         </div>
-    </div>
+        <nav>
+            <ul>
+                <li class="active"><a href="#">Dashboard</a></li>
+                <li><a href="#">Items / Catalog</a></li>
+                <li><a href="#">Customers</a></li>
+                <li><a href="#">Orders</a></li>
+                <li><a href="#">Designers</a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="main-content">
+        <header>
+            <h2>Dashboard</h2>
+            <div class="user-actions">
+                <span>Admin</span>
+                <a href="#" class="logout">Log Out</a>
+            </div>
+        </header>
+
+        <div class="kpi-grid">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Total Revenue</h3>
+                    <span class="more-options">...</span>
+                </div>
+                <div class="card-body">
+                    <div class="number">$<?php echo number_format($revenue, 2); ?></div>
+                    <div class="trend positive">+12% ↗</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Total Orders</h3>
+                    <span class="more-options">...</span>
+                </div>
+                <div class="card-body">
+                    <div class="number"><?php echo $totalOrders; ?></div>
+                    <div class="trend positive">+3 ↗</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Total Customers</h3>
+                    <span class="more-options">...</span>
+                </div>
+                <div class="card-body">
+                    <div class="number"><?php echo $totalCustomers; ?></div>
+                    <div class="trend positive">+4% ↗</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="card chart-container">
+                <h3>Revenue Overview (2025)</h3>
+                <canvas id="revenueChart"></canvas>
+            </div>
+            <div class="card chart-container">
+                <h3>Order Status</h3>
+                <canvas id="statusChart"></canvas>
+            </div>
+        </div>
+
+        <div class="table-section">
+            <h3>Recent Orders</h3>
+            <table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Email</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($recentOrders as $order): ?>
+                        <tr>
+                            <td>#<?php echo $order['ORDER_ID']; ?></td>
+                            <td><?php echo htmlspecialchars($order['CUSTOMER_NAME']); ?></td>
+                            <td><?php echo htmlspecialchars($order['CUSTOMER_EMAIL']); ?></td>
+                            <td>$<?php echo number_format($order['ORDER_TOTALAMOUNT'], 2); ?></td>
+                            <td>
+                                <span class="status-badge <?php echo strtolower($order['ORDER_STATUS']); ?>">
+                                    <?php echo ucfirst($order['ORDER_STATUS']); ?>
+                                </span>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <script>
+        // Dummy data for visual effect (you can hook this to PHP similarly later)
+        const ctx1 = document.getElementById('revenueChart');
+        new Chart(ctx1, {
+            type: 'line',
+            data: {
+                labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                datasets: [{
+                    label: 'Revenue',
+                    data: [1200, 1900, 3000, 5000, 2000, 3000],
+                    borderColor: '#ff9f43',
+                    backgroundColor: 'rgba(255, 159, 67, 0.2)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                }
+            }
+        });
+
+        const ctx2 = document.getElementById('statusChart');
+        new Chart(ctx2, {
+            type: 'doughnut',
+            data: {
+                labels: ['Delivered', 'Pending', 'Cancelled'],
+                datasets: [{
+                    data: [12, 5, 2],
+                    backgroundColor: ['#2ecc71', '#f1c40f', '#e74c3c']
+                }]
+            }
+        });
+    </script>
 </body>
 
 </html>
