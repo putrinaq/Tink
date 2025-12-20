@@ -62,7 +62,7 @@ nav a::after {
     width: 0;
     height: 5px;
     background: #6fb6d9;
-    transition: width 0.25s ease;
+    transition: width 0.01s ease;
 }
 
 /* When the link is hovered, grow the pseudo-element line to 100% */
@@ -144,7 +144,7 @@ button:active {
 
 /* ===== Footer ===== */
 .site-footer {
-    background: #f8f4ec;
+    background: rgba(251, 244, 228, 1);
     padding: 80px 8% 40px; 
     font-family: 'Inter', sans-serif; 
 }
