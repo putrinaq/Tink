@@ -1,8 +1,14 @@
 <?php
-// Ensure connection to config in the parent directory
-require_once '../config.php';
+session_start();
 
-// --- HANDLE ACTIONS ---
+// Check if the admin_id session variable exists
+if (!isset($_SESSION['admin_id'])) {
+    // If not logged in, redirect to the login page
+    header('Location: login.php');
+    exit;
+}
+
+require_once '../config.php'; // Your database connection
 
 // Delete Customer
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
@@ -49,7 +55,6 @@ $total_customers = $stmt->fetchColumn();
 $total_pages = ceil($total_customers / $limit);
 
 // 2. Main Customer Query (With Order Stats)
-// We join with `ORDER` to calculate Total Spent (LTV) and Order Count per customer
 $sql = "
     SELECT 
         c.*,
@@ -68,17 +73,14 @@ $stmt->execute($params);
 $customers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // 3. Key Performance Indicators (KPIs)
-// Total Customers
 $stats_total = $pdo->query("SELECT COUNT(*) FROM CUSTOMER")->fetchColumn();
 
-// New Customers (This Month)
 $stats_new = $pdo->query("
     SELECT COUNT(*) FROM CUSTOMER 
     WHERE MONTH(CUSTOMER_DATE) = MONTH(CURRENT_DATE()) 
     AND YEAR(CUSTOMER_DATE) = YEAR(CURRENT_DATE())
 ")->fetchColumn();
 
-// Active Customers (Placed at least 1 order)
 $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->fetchColumn();
 
 ?>
@@ -90,11 +92,31 @@ $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Management - TINK Admin</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/boxicons@2.1.4/css/boxicons.min.css">
-
     <link rel="stylesheet" href="../assets/css/dashboard.css">
+
+    <style>
+        /* Special style for the Order Link in Modal */
+        .order-link {
+            color: var(--blue-text);
+            font-weight: 600;
+            font-family: monospace;
+            text-decoration: none;
+            padding: 4px 8px;
+            background: var(--blue-bg);
+            border-radius: 4px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .order-link:hover {
+            background: #2563eb;
+            color: white;
+        }
+    </style>
 </head>
 
 <body>
@@ -145,7 +167,7 @@ $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->
                             <path
                                 d="m21.45 11.11-3-1.5-2.68-1.34-.03-.03-1.34-2.68-1.5-3c-.34-.68-1.45-.68-1.79 0l-1.5 3-1.34 2.68-.03.03-2.68 1.34-3 1.5c-.34.17-.55.52-.55.89s.21.72.55.89l3 1.5 2.68 1.34.03.03 1.34 2.68 1.5 3c.17.34.52.55.89.55s.72-.21.89-.55l1.5-3 1.34-2.68.03-.03 2.68-1.34 3-1.5c.34-.17.55-.52.55-.89s-.21-.72-.55-.89ZM19.5 1.5l-.94 2.06-2.06.94 2.06.94.94 2.06.94-2.06 2.06-.94-2.06-.94z">
                             </path>
-                        </svg><span>Items/Catalog</span></a></li>
+                        </svg></i><span>Items/Catalog</span></a></li>
                 <li class="active"><a href="#"><i class='bx bxs-user-circle'></i> <span>Customers</span></a></li>
                 <li><a href="orders.php"><i class='bx bxs-shopping-bags'></i> <span>Orders</span></a></li>
                 <li><a href="designers.php"><i class='bx bxs-palette'></i> <span>Designers</span></a></li>
@@ -256,9 +278,15 @@ $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->
                                         <span class="status-badge pending">No orders</span>
                                     <?php endif; ?>
                                 </td>
-                                <td>$<?php echo number_format($c['total_spent'], 2); ?></td>
+                                <td>RM<?php echo number_format($c['total_spent'], 2); ?></td>
                                 <td style="text-align: right;">
                                     <div class="action-buttons" style="justify-content: flex-end;">
+                                        <button class="btn-icon" style="background: var(--blue-bg); color: var(--blue-text);"
+                                            title="View Order History"
+                                            onclick="openOrdersModal(<?php echo $c['CUSTOMER_ID']; ?>, '<?php echo htmlspecialchars(addslashes($c['CUSTOMER_NAME'])); ?>')">
+                                            <i class='bx bx-shopping-bag'></i>
+                                        </button>
+
                                         <button class="btn-icon btn-edit" title="View Details"
                                             onclick='openViewModal(<?php echo json_encode($c); ?>)'>
                                             <i class='bx bx-show'></i>
@@ -296,22 +324,52 @@ $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Customer Profile</h2>
-                <button class="btn-close" onclick="closeViewModal()">&times;</button>
+                <button class="btn-close" onclick="closeModal('viewModal')">&times;</button>
             </div>
             <div class="modal-body" id="viewModalBody">
             </div>
             <div class="form-actions">
-                <button type="button" class="btn-cancel" onclick="closeViewModal()">Close</button>
+                <button type="button" class="btn-cancel" onclick="closeModal('viewModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="ordersModal" class="modal">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 id="ordersModalTitle">Order History</h2>
+                <button class="btn-close" onclick="closeModal('ordersModal')">&times;</button>
+            </div>
+
+            <div id="ordersLoading" style="text-align:center; padding: 20px;">
+                <i class='bx bx-loader-alt bx-spin' style="font-size: 2rem; color: var(--orange-accent);"></i>
+            </div>
+
+            <div id="ordersBody" style="display:none;">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date & Time</th>
+                            <th>Status</th>
+                            <th style="text-align: right;">Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="ordersList">
+                    </tbody>
+                </table>
+                <div id="noOrdersMsg"
+                    style="text-align: center; padding: 20px; color: var(--text-secondary); display: none;">
+                    No orders found for this customer.
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        const viewModal = document.getElementById('viewModal');
-        const viewBody = document.getElementById('viewModalBody');
-
+        // --- PROFILE MODAL LOGIC ---
         function openViewModal(data) {
-            // Format HTML for the modal
+            const viewBody = document.getElementById('viewModalBody');
             let html = `
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                     <div>
@@ -323,24 +381,20 @@ $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->
                         <div>#${data.CUSTOMER_ID}</div>
                     </div>
                 </div>
-
                 <div style="margin-bottom: 20px;">
                     <label class="stat-label">Email Address</label>
                     <div style="color: var(--blue-text);">${data.CUSTOMER_EMAIL}</div>
                 </div>
-
                 <div style="margin-bottom: 20px;">
                     <label class="stat-label">Phone Number</label>
                     <div>${data.CUSTOMER_TEL}</div>
                 </div>
-
                 <div style="margin-bottom: 20px;">
                     <label class="stat-label">Shipping Address</label>
                     <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #eee;">
                         ${data.CUSTOMER_ADDRESS}
                     </div>
                 </div>
-
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #eee; padding-top: 20px;">
                     <div>
                         <label class="stat-label">Total Lifetime Spend</label>
@@ -354,13 +408,73 @@ $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->
                     </div>
                 </div>
             `;
-
             viewBody.innerHTML = html;
-            viewModal.classList.add('active');
+            document.getElementById('viewModal').classList.add('active');
         }
 
-        function closeViewModal() {
-            viewModal.classList.remove('active');
+        // --- ORDERS MODAL LOGIC (UPDATED) ---
+        function openOrdersModal(customerId, customerName) {
+            const modal = document.getElementById('ordersModal');
+            const title = document.getElementById('ordersModalTitle');
+            const loader = document.getElementById('ordersLoading');
+            const body = document.getElementById('ordersBody');
+            const list = document.getElementById('ordersList');
+            const noMsg = document.getElementById('noOrdersMsg');
+
+            title.innerText = `Orders: ${customerName}`;
+            modal.classList.add('active');
+            loader.style.display = 'block';
+            body.style.display = 'none';
+
+            // Fetch Orders from API
+            fetch(`api/get-customer-orders.php?id=${customerId}`)
+                .then(res => res.json())
+                .then(data => {
+                    loader.style.display = 'none';
+                    body.style.display = 'block';
+                    list.innerHTML = '';
+
+                    if (data.length > 0) {
+                        noMsg.style.display = 'none';
+                        data.forEach(order => {
+                            const dateObj = new Date(order.ORDER_DATE);
+                            const dateStr = dateObj.toLocaleDateString();
+                            const timeStr = dateObj.toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit'
+                            });
+
+                            const row = `
+                            <tr>
+                                <td>
+                                    <a href="orders.php?search=${order.ORDER_ID}" class="order-link" title="Manage Order #${order.ORDER_ID}">
+                                        #${order.ORDER_ID} <i class='bx bx-link-external'></i>
+                                    </a>
+                                </td>
+                                <td>
+                                    <div style="font-weight:500;">${dateStr}</div>
+                                    <small style="color:var(--text-light);">${timeStr}</small>
+                                </td>
+                                <td><span class="status-badge ${order.ORDER_STATUS.toLowerCase()}">${order.ORDER_STATUS}</span></td>
+                                <td style="text-align: right; font-weight:600;">$${parseFloat(order.ORDER_TOTALAMOUNT).toFixed(2)}</td>
+                            </tr>
+                        `;
+                            list.innerHTML += row;
+                        });
+                    } else {
+                        noMsg.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    console.error(err);
+                    alert("Failed to load orders.");
+                    closeModal('ordersModal');
+                });
+        }
+
+        // Shared Close Function
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
         }
 
         function deleteCustomer(id) {
@@ -378,8 +492,8 @@ $stats_active = $pdo->query("SELECT COUNT(DISTINCT CUSTOMER_ID) FROM `ORDER`")->
 
         // Close on outside click
         window.onclick = function(event) {
-            if (event.target == viewModal) {
-                closeViewModal();
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
             }
         }
 

@@ -1,13 +1,14 @@
 <?php
-require_once '../config.php';
-// session_start();
+session_start();
 
-// // Check admin authentication
-// if (!isset($_SESSION['admin_id'])) {
-//     header('Location: /admin/login.php');
-//     exit;
-// }
+// Check if the admin_id session variable exists
+if (!isset($_SESSION['admin_id'])) {
+    // If not logged in, redirect to the login page
+    header('Location: login.php');
+    exit;
+}
 
+require_once '../config.php'; // Your database connection
 // --- 1. FETCH DATA FOR WIDGETS ---
 
 // KPI 1: Total Revenue (Successful payments)

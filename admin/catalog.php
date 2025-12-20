@@ -1,12 +1,14 @@
 <?php
-require_once '../config.php';
-// session_start();
+session_start();
 
-// // Check admin authentication
-// if (!isset($_SESSION['admin_id'])) {
-//     header('Location: /admin/login.php');
-//     exit;
-// }
+// Check if the admin_id session variable exists
+if (!isset($_SESSION['admin_id'])) {
+    // If not logged in, redirect to the login page
+    header('Location: login.php');
+    exit;
+}
+
+require_once '../config.php'; // Your database connection
 
 // --- HANDLE FORM SUBMISSIONS ---
 
@@ -237,10 +239,10 @@ $category_stats = $pdo->query("
             <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 288 149.67">
                 <defs>
                     <style>
-                        .cls-1 {
-                            fill: #000;
-                            stroke-width: 0px;
-                        }
+                    .cls-1 {
+                        fill: #000;
+                        stroke-width: 0px;
+                    }
                     </style>
                 </defs>
                 <path class="cls-1"
@@ -308,16 +310,16 @@ $category_stats = $pdo->query("
 
         <!-- ALERTS -->
         <?php if (isset($success_msg)): ?>
-            <div class="alert alert-success">
-                <i class='bx bx-check-circle'></i>
-                <?php echo htmlspecialchars($success_msg); ?>
-            </div>
+        <div class="alert alert-success">
+            <i class='bx bx-check-circle'></i>
+            <?php echo htmlspecialchars($success_msg); ?>
+        </div>
         <?php endif; ?>
         <?php if (isset($error_msg)): ?>
-            <div class="alert alert-error">
-                <i class='bx bx-x-circle'></i>
-                <?php echo htmlspecialchars($error_msg); ?>
-            </div>
+        <div class="alert alert-error">
+            <i class='bx bx-x-circle'></i>
+            <?php echo htmlspecialchars($error_msg); ?>
+        </div>
         <?php endif; ?>
 
         <div class="catalog-container">
@@ -351,15 +353,15 @@ $category_stats = $pdo->query("
 
             <!-- LOW STOCK ALERT -->
             <?php if (!empty($low_stock)): ?>
-                <div class="low-stock-list">
-                    <h4><i class='bx bx-alarm-exclamation'></i> Low Stock Alert</h4>
-                    <?php foreach ($low_stock as $item): ?>
-                        <div class="stock-item">
-                            <span><?php echo htmlspecialchars($item['ITEM_NAME']); ?></span>
-                            <span class="stock-status stock-low"><?php echo $item['ITEM_STOCK']; ?> units</span>
-                        </div>
-                    <?php endforeach; ?>
+            <div class="low-stock-list">
+                <h4><i class='bx bx-alarm-exclamation'></i> Low Stock Alert</h4>
+                <?php foreach ($low_stock as $item): ?>
+                <div class="stock-item">
+                    <span><?php echo htmlspecialchars($item['ITEM_NAME']); ?></span>
+                    <span class="stock-status stock-low"><?php echo $item['ITEM_STOCK']; ?> units</span>
                 </div>
+                <?php endforeach; ?>
+            </div>
             <?php endif; ?>
 
             <!-- FILTERS & ACTIONS -->
@@ -435,82 +437,82 @@ $category_stats = $pdo->query("
                     </div>
 
                     <?php if (!empty($items)): ?>
-                        <?php foreach ($items as $item): ?>
-                            <div class="product-row">
-                                <div class="product-image">
-                                    <?php if ($item['ITEM_IMAGE']): ?>
-                                        <img src="<?php echo htmlspecialchars($item['ITEM_IMAGE']); ?>"
-                                            alt="<?php echo htmlspecialchars($item['ITEM_NAME']); ?>">
-                                    <?php else: ?>
-                                        <i class='bx bx-image-alt' style="font-size: 1.8rem; color: #ccc;"></i>
-                                    <?php endif; ?>
-                                </div>
+                    <?php foreach ($items as $item): ?>
+                    <div class="product-row">
+                        <div class="product-image">
+                            <?php if ($item['ITEM_IMAGE']): ?>
+                            <img src="<?php echo htmlspecialchars($item['ITEM_IMAGE']); ?>"
+                                alt="<?php echo htmlspecialchars($item['ITEM_NAME']); ?>">
+                            <?php else: ?>
+                            <i class='bx bx-image-alt' style="font-size: 1.8rem; color: #ccc;"></i>
+                            <?php endif; ?>
+                        </div>
 
-                                <div class="product-name"><?php echo htmlspecialchars($item['ITEM_NAME']); ?></div>
+                        <div class="product-name"><?php echo htmlspecialchars($item['ITEM_NAME']); ?></div>
 
-                                <div>
-                                    <span class="category-badge"><?php echo htmlspecialchars($item['ITEM_CATEGORY']); ?></span>
-                                </div>
+                        <div>
+                            <span class="category-badge"><?php echo htmlspecialchars($item['ITEM_CATEGORY']); ?></span>
+                        </div>
 
-                                <div>RM <?php echo number_format($item['ITEM_PRICE'], 2); ?></div>
+                        <div>RM <?php echo number_format($item['ITEM_PRICE'], 2); ?></div>
 
-                                <div>
-                                    <span class="stock-status <?php
+                        <div>
+                            <span class="stock-status <?php
                                                                 echo $item['ITEM_STOCK'] > 30 ? 'stock-high' : ($item['ITEM_STOCK'] > 15 ? 'stock-medium' : 'stock-low');
                                                                 ?>">
-                                        <?php echo $item['ITEM_STOCK']; ?>
-                                    </span>
-                                </div>
-
-                                <div><?php echo htmlspecialchars($item['DESIGNER_NAME']); ?></div>
-
-                                <div class="action-buttons">
-                                    <button class="btn-icon btn-edit" title="Edit"
-                                        onclick="openEditProductModal(<?php echo $item['ITEM_ID']; ?>)">
-                                        <i class='bx bx-edit'></i>
-                                    </button>
-                                    <button class="btn-icon btn-delete" title="Delete"
-                                        onclick="deleteProduct(<?php echo $item['ITEM_ID']; ?>, '<?php echo htmlspecialchars($item['ITEM_NAME']); ?>')">
-                                        <i class='bx bx-trash'></i>
-                                    </button>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    <?php else: ?>
-                        <div style="padding: 40px 20px; text-align: center; color: #6b7280;">
-                            <i class='bx bx-inbox' style="font-size: 3rem; display: block; margin-bottom: 10px;"></i>
-                            <p>No products found. Try adjusting your filters or add a new product.</p>
+                                <?php echo $item['ITEM_STOCK']; ?>
+                            </span>
                         </div>
+
+                        <div><?php echo htmlspecialchars($item['DESIGNER_NAME']); ?></div>
+
+                        <div class="action-buttons">
+                            <button class="btn-icon btn-edit" title="Edit"
+                                onclick="openEditProductModal(<?php echo $item['ITEM_ID']; ?>)">
+                                <i class='bx bx-edit'></i>
+                            </button>
+                            <button class="btn-icon btn-delete" title="Delete"
+                                onclick="deleteProduct(<?php echo $item['ITEM_ID']; ?>, '<?php echo htmlspecialchars($item['ITEM_NAME']); ?>')">
+                                <i class='bx bx-trash'></i>
+                            </button>
+                        </div>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php else: ?>
+                    <div style="padding: 40px 20px; text-align: center; color: #6b7280;">
+                        <i class='bx bx-inbox' style="font-size: 3rem; display: block; margin-bottom: 10px;"></i>
+                        <p>No products found. Try adjusting your filters or add a new product.</p>
+                    </div>
                     <?php endif; ?>
                 </div>
             </div>
 
             <!-- PAGINATION -->
             <?php if ($total_pages > 1): ?>
-                <div class="pagination">
-                    <?php if ($page > 1): ?>
-                        <a
-                            href="?page=1&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">First</a>
-                        <a
-                            href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">Previous</a>
-                    <?php endif; ?>
+            <div class="pagination">
+                <?php if ($page > 1): ?>
+                <a
+                    href="?page=1&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">First</a>
+                <a
+                    href="?page=<?php echo $page - 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">Previous</a>
+                <?php endif; ?>
 
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                        <?php if ($i === $page): ?>
-                            <span class="active"><?php echo $i; ?></span>
-                        <?php else: ?>
-                            <a
-                                href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>"><?php echo $i; ?></a>
-                        <?php endif; ?>
-                    <?php endfor; ?>
+                <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                <?php if ($i === $page): ?>
+                <span class="active"><?php echo $i; ?></span>
+                <?php else: ?>
+                <a
+                    href="?page=<?php echo $i; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>"><?php echo $i; ?></a>
+                <?php endif; ?>
+                <?php endfor; ?>
 
-                    <?php if ($page < $total_pages): ?>
-                        <a
-                            href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">Next</a>
-                        <a
-                            href="?page=<?php echo $total_pages; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">Last</a>
-                    <?php endif; ?>
-                </div>
+                <?php if ($page < $total_pages): ?>
+                <a
+                    href="?page=<?php echo $page + 1; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">Next</a>
+                <a
+                    href="?page=<?php echo $total_pages; ?>&search=<?php echo urlencode($search); ?>&category=<?php echo urlencode($category_filter); ?>&sort=<?php echo urlencode($sort_by); ?>">Last</a>
+                <?php endif; ?>
+            </div>
             <?php endif; ?>
         </div>
     </main>
@@ -571,8 +573,8 @@ $category_stats = $pdo->query("
                     <select name="designer_id" id="designerId" required>
                         <option value="">Select Designer</option>
                         <?php foreach ($designers as $designer): ?>
-                            <option value="<?php echo $designer['DESIGNER_ID']; ?>">
-                                <?php echo htmlspecialchars($designer['DESIGNER_NAME']); ?></option>
+                        <option value="<?php echo $designer['DESIGNER_ID']; ?>">
+                            <?php echo htmlspecialchars($designer['DESIGNER_NAME']); ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -593,68 +595,68 @@ $category_stats = $pdo->query("
     </div>
 
     <script>
-        const productModal = document.getElementById('productModal');
-        const productForm = document.getElementById('productForm');
+    const productModal = document.getElementById('productModal');
+    const productForm = document.getElementById('productForm');
 
-        function openAddProductModal() {
-            document.getElementById('modalTitle').textContent = 'Add New Product';
-            document.getElementById('formAction').value = 'add_product';
-            document.getElementById('itemId').value = '';
-            productForm.reset();
-            productModal.classList.add('active');
-        }
+    function openAddProductModal() {
+        document.getElementById('modalTitle').textContent = 'Add New Product';
+        document.getElementById('formAction').value = 'add_product';
+        document.getElementById('itemId').value = '';
+        productForm.reset();
+        productModal.classList.add('active');
+    }
 
-        function openEditProductModal(itemId) {
-            // Fetch product data via AJAX
-            fetch(`/admin/api/get-product.php?item_id=${itemId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('modalTitle').textContent = 'Edit Product';
-                    document.getElementById('formAction').value = 'edit_product';
-                    document.getElementById('itemId').value = data.ITEM_ID;
-                    document.getElementById('itemName').value = data.ITEM_NAME;
-                    document.getElementById('itemDescription').value = data.ITEM_DESCRIPTION;
-                    document.getElementById('itemCategory').value = data.ITEM_CATEGORY;
-                    document.getElementById('itemPrice').value = data.ITEM_PRICE;
-                    document.getElementById('itemStock').value = data.ITEM_STOCK;
-                    document.getElementById('itemMaterial').value = data.ITEM_MATERIAL;
-                    document.getElementById('designerId').value = data.DESIGNER_ID;
-                    productModal.classList.add('active');
-                })
-                .catch(error => alert('Error loading product: ' + error));
-        }
+    function openEditProductModal(itemId) {
+        // Fetch product data via AJAX
+        fetch(`/admin/api/get-product.php?item_id=${itemId}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('modalTitle').textContent = 'Edit Product';
+                document.getElementById('formAction').value = 'edit_product';
+                document.getElementById('itemId').value = data.ITEM_ID;
+                document.getElementById('itemName').value = data.ITEM_NAME;
+                document.getElementById('itemDescription').value = data.ITEM_DESCRIPTION;
+                document.getElementById('itemCategory').value = data.ITEM_CATEGORY;
+                document.getElementById('itemPrice').value = data.ITEM_PRICE;
+                document.getElementById('itemStock').value = data.ITEM_STOCK;
+                document.getElementById('itemMaterial').value = data.ITEM_MATERIAL;
+                document.getElementById('designerId').value = data.DESIGNER_ID;
+                productModal.classList.add('active');
+            })
+            .catch(error => alert('Error loading product: ' + error));
+    }
 
-        function closeProductModal() {
-            productModal.classList.remove('active');
-        }
+    function closeProductModal() {
+        productModal.classList.remove('active');
+    }
 
-        function deleteProduct(itemId, itemName) {
-            if (confirm(`Are you sure you want to delete "${itemName}"? This action cannot be undone.`)) {
-                const form = document.createElement('form');
-                form.method = 'POST';
-                form.innerHTML = `
+    function deleteProduct(itemId, itemName) {
+        if (confirm(`Are you sure you want to delete "${itemName}"? This action cannot be undone.`)) {
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.innerHTML = `
                     <input type="hidden" name="action" value="delete_product">
                     <input type="hidden" name="item_id" value="${itemId}">
                 `;
-                document.body.appendChild(form);
-                form.submit();
-            }
+            document.body.appendChild(form);
+            form.submit();
         }
+    }
 
-        // Close modal when clicking outside
-        productModal.addEventListener('click', (e) => {
-            if (e.target === productModal) {
-                closeProductModal();
-            }
-        });
+    // Close modal when clicking outside
+    productModal.addEventListener('click', (e) => {
+        if (e.target === productModal) {
+            closeProductModal();
+        }
+    });
 
-        // Auto-close alerts after 4 seconds
-        document.querySelectorAll('.alert').forEach(alert => {
-            setTimeout(() => {
-                alert.style.opacity = '0';
-                setTimeout(() => alert.remove(), 300);
-            }, 4000);
-        });
+    // Auto-close alerts after 4 seconds
+    document.querySelectorAll('.alert').forEach(alert => {
+        setTimeout(() => {
+            alert.style.opacity = '0';
+            setTimeout(() => alert.remove(), 300);
+        }, 4000);
+    });
     </script>
 </body>
 

@@ -1,6 +1,14 @@
 <?php
-require_once '../config.php';
+session_start();
 
+// Check if the admin_id session variable exists
+if (!isset($_SESSION['admin_id'])) {
+    // If not logged in, redirect to the login page
+    header('Location: login.php');
+    exit;
+}
+
+require_once '../config.php'; // Your database connection
 // --- HANDLE ACTIONS ---
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
 
