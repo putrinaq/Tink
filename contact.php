@@ -3,13 +3,16 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Tuk | Necklaces</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@300;400;500&display=swap"
+        rel="stylesheet">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -27,7 +30,10 @@
             color: #1c1c1c;
         }
 
-        h1, h2, h3, h4 {
+        h1,
+        h2,
+        h3,
+        h4 {
             font-family: 'Playfair Display', serif;
             font-weight: 400;
         }
@@ -119,7 +125,7 @@
             background: #fff;
             border-radius: 16px;
             padding: 14px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
             text-align: center;
         }
 
@@ -173,7 +179,8 @@
             margin-bottom: 12px;
         }
 
-        .footer-grid a, .footer-grid p {
+        .footer-grid a,
+        .footer-grid p {
             text-decoration: none;
             color: #333;
             display: block;
@@ -199,114 +206,116 @@
         }
     </style>
 </head>
+
 <body>
 
-<header>
-    <div class="logo">Tuk</div>
-    <nav>
-        <a href="#">BRACELETS</a>
-        <a href="#">NECKLACES</a>
-        <a href="#">EARRINGS</a>
-        <a href="#">RINGS</a>
-        <a href="#">CHARMS</a>
-        <a href="#">DESIGNERS</a>
-    </nav>
-    <div class="nav-icons">
-        <i class="fa-solid fa-magnifying-glass"></i>
-        <i class="fa-solid fa-cart-shopping"></i>
-        <i class="fa-regular fa-user"></i>
+    <header>
+        <div class="logo">Tuk</div>
+        <nav>
+            <a href="#">BRACELETS</a>
+            <a href="#">NECKLACES</a>
+            <a href="#">EARRINGS</a>
+            <a href="#">RINGS</a>
+            <a href="#">CHARMS</a>
+            <a href="#">DESIGNERS</a>
+        </nav>
+        <div class="nav-icons">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <i class="fa-solid fa-cart-shopping"></i>
+            <i class="fa-regular fa-user"></i>
+        </div>
+    </header>
+
+    <div class="page-title">
+        <h1>NECKLACES</h1>
     </div>
-</header>
 
-<div class="page-title">
-    <h1>NECKLACES</h1>
-</div>
+    <div class="container">
+        <!-- Filters -->
+        <aside class="filters">
+            <div class="filter-group">
+                <h4>Gender</h4>
+                <label><input type="checkbox"> Men</label>
+                <label><input type="checkbox"> Women</label>
+                <label><input type="checkbox"> Unisex</label>
+            </div>
 
-<div class="container">
-    <!-- Filters -->
-    <aside class="filters">
-        <div class="filter-group">
-            <h4>Gender</h4>
-            <label><input type="checkbox"> Men</label>
-            <label><input type="checkbox"> Women</label>
-            <label><input type="checkbox"> Unisex</label>
-        </div>
+            <div class="filter-group">
+                <h4>Style</h4>
+                <label><input type="checkbox"> Minimal</label>
+                <label><input type="checkbox"> Elegant</label>
+            </div>
 
-        <div class="filter-group">
-            <h4>Style</h4>
-            <label><input type="checkbox"> Minimal</label>
-            <label><input type="checkbox"> Elegant</label>
-        </div>
+            <div class="filter-group">
+                <h4>Material</h4>
+                <label><input type="checkbox"> Silver</label>
+                <label><input type="checkbox"> Gold</label>
+            </div>
 
-        <div class="filter-group">
-            <h4>Material</h4>
-            <label><input type="checkbox"> Silver</label>
-            <label><input type="checkbox"> Gold</label>
-        </div>
+            <div class="filter-group">
+                <h4>Aesthetics</h4>
+                <label><input type="checkbox"> Floral</label>
+                <label><input type="checkbox"> Ocean</label>
+            </div>
+        </aside>
 
-        <div class="filter-group">
-            <h4>Aesthetics</h4>
-            <label><input type="checkbox"> Floral</label>
-            <label><input type="checkbox"> Ocean</label>
-        </div>
-    </aside>
+        <!-- Products -->
+        <main>
+            <div class="top-controls">
+                <label><input type="checkbox"> Personalize</label>
+                <select>
+                    <option>Sort By</option>
+                    <option>Price: Low to High</option>
+                    <option>Price: High to Low</option>
+                </select>
+            </div>
 
-    <!-- Products -->
-    <main>
-        <div class="top-controls">
-            <label><input type="checkbox"> Personalize</label>
-            <select>
-                <option>Sort By</option>
-                <option>Price: Low to High</option>
-                <option>Price: High to Low</option>
-            </select>
-        </div>
-
-        <div class="products">
-            <?php for ($i = 0; $i < 9; $i++): ?>
-                <div class="product">
-                    <img src="assets/images/ring1.png" alt="Product">
-                    <h4>"Little Flower" Adjustable Ring</h4>
-                    <div class="designer">Designed by Crescentia</div>
-                    <div class="tags">
-                        <span>Silver</span>
-                        <span>Adjustable</span>
+            <div class="products">
+                <?php for ($i = 0; $i < 9; $i++): ?>
+                    <div class="product">
+                        <img src="assets/images/ring1.png" alt="Product">
+                        <h4>"Little Flower" Adjustable Ring</h4>
+                        <div class="designer">Designed by Crescentia</div>
+                        <div class="tags">
+                            <span>Silver</span>
+                            <span>Adjustable</span>
+                        </div>
+                        <div class="price">RM 33</div>
                     </div>
-                    <div class="price">RM 33</div>
+                <?php endfor; ?>
+            </div>
+        </main>
+    </div>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h4>Info</h4>
+                <a href="#">Terms & Conditions</a>
+                <a href="#">Privacy & Policy</a>
+                <a href="#">FAQ</a>
+            </div>
+
+            <div>
+                <h4>Customer Service</h4>
+                <p>013-8974568</p>
+                <p>tink@gmail.com</p>
+            </div>
+
+            <div>
+                <h4>Follow Us</h4>
+                <div class="footer-social">
+                    <i class="fa-brands fa-facebook"></i>
+                    <i class="fa-brands fa-instagram"></i>
                 </div>
-            <?php endfor; ?>
-        </div>
-    </main>
-</div>
-
-<footer>
-    <div class="footer-grid">
-        <div>
-            <h4>Info</h4>
-            <a href="#">Terms & Conditions</a>
-            <a href="#">Privacy & Policy</a>
-            <a href="#">FAQ</a>
-        </div>
-
-        <div>
-            <h4>Customer Service</h4>
-            <p>013-8974568</p>
-            <p>tink@gmail.com</p>
-        </div>
-
-        <div>
-            <h4>Follow Us</h4>
-            <div class="footer-social">
-                <i class="fa-brands fa-facebook"></i>
-                <i class="fa-brands fa-instagram"></i>
             </div>
         </div>
-    </div>
 
-    <div class="footer-bottom">
-        © <?php echo date("Y"); ?> Tuk. All Rights Reserved
-    </div>
-</footer>
+        <div class="footer-bottom">
+            © <?php echo date("Y"); ?> Tuk. All Rights Reserved
+        </div>
+    </footer>
 
 </body>
+
 </html>
