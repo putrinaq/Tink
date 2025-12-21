@@ -174,41 +174,44 @@ header {
 	}
 }
 header {
-	position: absolute;
-	top: 30px;
-	width: 100%;
-	padding: 20px 35px;
-	align-items: center;
-	justify-content: space-between;
-	color: #fff;
-	z-index: 10;
+    position: absolute;
+    top: 30px;
+    width: 100%;
+    padding: 20px 35px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: #fff;
+    z-index: 10;
+    background: transparent;
 }
 
 nav a {
-	margin: 0 15px;
-	text-decoration: none;
-	color: #fff;
-	font-size: 15px;
-	letter-spacing: 1px;
-	position: relative;
-	padding-bottom: 5px;
+    display:inline-block;
+    margin: 0 15px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 15px;
+    letter-spacing: 2px;
+    position: relative; 
+    padding-bottom: 10px;
 }
 
 /* Create the line but keep it at 0 width initially */
 nav a::after {
-	content: "";
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	width: 0;
-	height: 2px;
-	background: #6fb6d9;
-	transition: width 0.01s ease;
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 0;
+    height: 5px;
+    background: #6fb6d9;
+    transition: width 0.01s ease;
 }
 
 /* When the link is hovered, grow the pseudo-element line to 100% */
 nav a:hover::after {
-	width: 100%;
+    width: 100%;
 }
 
 .header-right {
@@ -305,9 +308,9 @@ button:active {
 
 /* ===== Footer ===== */
 .site-footer {
-	background: #f8f4ec;
-	padding: 80px 8% 40px;
-	font-family: "Inter", sans-serif;
+    background: rgba(251, 244, 228, 1);
+    padding: 80px 8% 40px; 
+    font-family: 'Inter', sans-serif; 
 }
 
 /* 1. Refined Headings */
