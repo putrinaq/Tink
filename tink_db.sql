@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Dec 20, 2025 at 08:28 AM
+-- Generation Time: Dec 21, 2025 at 05:58 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -32,7 +32,7 @@ CREATE TABLE `admin` (
   `ADMIN_NAME` varchar(100) NOT NULL,
   `ADMIN_USERNAME` varchar(50) NOT NULL,
   `ADMIN_PASSWORD` varchar(255) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admin`
@@ -51,23 +51,17 @@ CREATE TABLE `cart` (
   `CART_ID` int(11) NOT NULL,
   `CUSTOMER_ID` int(11) NOT NULL,
   `CART_STATUS` varchar(20) NOT NULL DEFAULT 'active'
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `cart`
 --
 
 INSERT INTO `cart` (`CART_ID`, `CUSTOMER_ID`, `CART_STATUS`) VALUES
-(4001, 1001, 'active'),
-(4002, 1002, 'active'),
-(4003, 1003, 'converted'),
-(4004, 1004, 'active'),
-(4005, 1005, 'active'),
-(4006, 1006, 'abandoned'),
-(4007, 1007, 'active'),
-(4008, 1008, 'converted'),
-(4009, 1009, 'active'),
-(4010, 1010, 'active');
+(5001, 1001, 'active'),
+(5002, 1002, 'converted'),
+(5003, 1006, 'completed'),
+(5004, 1006, 'active');
 
 -- --------------------------------------------------------
 
@@ -82,27 +76,17 @@ CREATE TABLE `cartitem` (
   `CARTITEM_QUANTITY` int(11) NOT NULL,
   `CARTITEM_PRICE` decimal(10,2) NOT NULL,
   `CARTITEM_ENGRAVING` varchar(255) DEFAULT NULL
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `cartitem`
 --
 
 INSERT INTO `cartitem` (`CARTITEM_ID`, `CART_ID`, `ITEM_ID`, `CARTITEM_QUANTITY`, `CARTITEM_PRICE`, `CARTITEM_ENGRAVING`) VALUES
-(1, 4001, 2001, 2, 89.99, NULL),
-(2, 4001, 2003, 1, 65.50, NULL),
-(3, 4002, 2005, 1, 74.99, NULL),
-(4, 4003, 2001, 1, 89.99, NULL),
-(5, 4003, 2002, 1, 59.99, NULL),
-(6, 4004, 2004, 1, 299.99, NULL),
-(7, 4005, 2006, 2, 54.99, NULL),
-(8, 4006, 2007, 3, 39.99, NULL),
-(9, 4007, 2009, 1, 79.99, NULL),
-(10, 4008, 2002, 1, 59.99, NULL),
-(11, 4008, 2010, 2, 44.99, NULL),
-(12, 4009, 2008, 1, 89.99, NULL),
-(13, 4010, 2005, 1, 74.99, NULL),
-(14, 4010, 2007, 1, 39.99, NULL);
+(1, 5001, 3001, 1, 150.00, 'Forever'),
+(2, 5001, 3005, 1, 30.00, NULL),
+(3, 5002, 3021, 1, 50.00, NULL),
+(5, 5003, 3023, 1, 55.00, NULL);
 
 -- --------------------------------------------------------
 
@@ -114,7 +98,15 @@ CREATE TABLE `cartitem_charm` (
   `ID` int(11) NOT NULL,
   `CARTITEM_ID` int(11) NOT NULL,
   `CHARM_ID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cartitem_charm`
+--
+
+INSERT INTO `cartitem_charm` (`ID`, `CARTITEM_ID`, `CHARM_ID`) VALUES
+(1, 3, 11001),
+(2, 3, 11002);
 
 -- --------------------------------------------------------
 
@@ -131,7 +123,7 @@ CREATE TABLE `charm` (
   `CHARM_COMPATIBLE_CAT` varchar(100) NOT NULL,
   `CHARM_IMAGE` varchar(255) DEFAULT NULL,
   `CHARM_ACTIVE` tinyint(1) NOT NULL DEFAULT 1
-) ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `charm`
@@ -163,43 +155,19 @@ CREATE TABLE `customer` (
   `CUSTOMER_TEL` varchar(15) NOT NULL,
   `CUSTOMER_ADDRESS` varchar(255) NOT NULL,
   `CUSTOMER_DATE` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `customer`
 --
 
 INSERT INTO `customer` (`CUSTOMER_ID`, `CUSTOMER_NAME`, `CUSTOMER_EMAIL`, `CUSTOMER_PW`, `CUSTOMER_TEL`, `CUSTOMER_ADDRESS`, `CUSTOMER_DATE`) VALUES
-(1001, 'Nur Aini', 'nur.aini@email.com', '$2y$10$dummy', '012-345-6789', '123 Jalan Merdeka, KL', '2025-01-10 08:30:00'),
-(1002, 'Siti Farah', 'siti.farah@email.com', '$2y$10$dummy', '011-222-3333', '456 Persiaran Sultan, KL', '2025-01-11 09:15:00'),
-(1003, 'Fatimah Zahra', 'fatimah.z@email.com', '$2y$10$dummy', '016-444-5555', '789 Jalan Bukit, KL', '2025-01-12 10:45:00'),
-(1004, 'Yasmin Sofiya', 'yasmin.s@email.com', '$2y$10$dummy', '013-666-7777', '321 Jalan Ampang, KL', '2025-01-13 11:20:00'),
-(1005, 'Leila Nazira', 'leila.n@email.com', '$2y$10$dummy', '017-888-9999', '654 Jalan Kebun, KL', '2025-01-14 12:30:00'),
-(1006, 'Amira Putri', 'amira.p@email.com', '$2y$10$dummy', '010-111-2222', '987 Jalan Damansara, KL', '2025-01-15 13:45:00'),
-(1007, 'Nadia Husna', 'nadia.h@email.com', '$2y$10$dummy', '014-333-4444', '111 Jalan Kota, KL', '2025-01-16 14:15:00'),
-(1008, 'Hana Salma', 'hana.s@email.com', '$2y$10$dummy', '015-555-6666', '222 Jalan Sultan, KL', '2025-01-17 15:30:00'),
-(1009, 'Zara Eka', 'zara.e@email.com', '$2y$10$dummy', '012-777-8888', '333 Jalan Taming, KL', '2025-01-18 16:45:00'),
-(1010, 'Maya Ilya', 'maya.i@email.com', '$2y$10$dummy', '011-999-0000', '444 Jalan Raja, KL', '2025-01-19 17:20:00'),
-(1011, 'Omar Harris', 'omar.h@email.com', '$2y$10$dummy', '019-123-4567', '88 Jalan Tun Razak, KL', '2025-02-01 09:00:00'),
-(1012, 'Jessica Lim', 'jess.lim@email.com', '$2y$10$dummy', '012-987-6543', '12 Taman Tun, KL', '2025-02-02 10:15:00'),
-(1013, 'Ravi Kumar', 'ravi.k@email.com', '$2y$10$dummy', '016-555-0101', '45 Brickfields, KL', '2025-02-05 11:30:00'),
-(1014, 'Mei Ling', 'mei.ling@email.com', '$2y$10$dummy', '017-333-2222', 'Subang Jaya, SEL', '2025-02-10 14:00:00'),
-(1015, 'Sarah Ahmad', 'sarah.ah@email.com', '$2y$10$dummy', '013-444-5555', 'Shah Alam, SEL', '2025-02-12 16:45:00'),
-(1016, 'David Tan', 'david.t@email.com', '$2y$10$dummy', '011-111-9999', 'Petaling Jaya, SEL', '2025-02-15 09:20:00'),
-(1017, 'Priya Menon', 'priya.m@email.com', '$2y$10$dummy', '012-222-8888', 'Bangsar, KL', '2025-02-20 12:10:00'),
-(1018, 'Alex Wong', 'alex.w@email.com', '$2y$10$dummy', '010-666-7777', 'Cheras, KL', '2025-03-01 15:30:00'),
-(1019, 'Nina Ricci', 'nina.r@email.com', '$2y$10$dummy', '018-777-6666', 'Mont Kiara, KL', '2025-03-05 10:00:00'),
-(1020, 'Kenji Sato', 'kenji.s@email.com', '$2y$10$dummy', '019-888-5555', 'Desa Park City, KL', '2025-03-10 11:15:00'),
-(1021, 'Alice Cooper', 'alice.c@email.com', '$2y$10$dummy', '017-999-4444', 'Ampang Hilir, KL', '2025-03-15 13:45:00'),
-(1022, 'Bob Marley', 'bob.m@email.com', '$2y$10$dummy', '012-000-1111', 'Setia Alam, SEL', '2025-03-20 09:30:00'),
-(1023, 'Cindy Crawford', 'cindy.c@email.com', '$2y$10$dummy', '013-121-2121', 'Klang, SEL', '2025-03-25 14:20:00'),
-(1024, 'Daniel Craig', 'daniel.c@email.com', '$2y$10$dummy', '014-343-4343', 'Puchong, SEL', '2025-04-01 16:00:00'),
-(1025, 'Eva Green', 'eva.g@email.com', '$2y$10$dummy', '015-565-6565', 'Cyberjaya, SEL', '2025-04-05 10:30:00'),
-(1026, 'Frank Sinatra', 'frank.s@email.com', '$2y$10$dummy', '016-787-8787', 'Putrajaya', '2025-04-10 11:50:00'),
-(1027, 'Grace Kelly', 'grace.k@email.com', '$2y$10$dummy', '017-909-0909', 'Sepang, SEL', '2025-04-15 13:10:00'),
-(1028, 'Harry Potter', 'harry.p@email.com', '$2y$10$dummy', '018-123-3210', 'Gombak, SEL', '2025-04-20 15:40:00'),
-(1029, 'Iris West', 'iris.w@email.com', '$2y$10$dummy', '019-456-6540', 'Selayang, SEL', '2025-04-25 09:15:00'),
-(1030, 'Jack Sparrow', 'jack.s@email.com', '$2y$10$dummy', '011-789-9870', 'Port Klang, SEL', '2025-04-30 14:55:00');
+(1001, 'Nur Aini', 'nur.aini@email.com', '$2y$10$dummy', '012-345-6789', '123 Jalan Merdeka, Kuala Lumpur', '2025-01-10 08:30:00'),
+(1002, 'Siti Farah', 'siti.farah@email.com', '$2y$10$dummy', '011-222-3333', '456 Persiaran Sultan, Kuala Lumpur', '2025-01-11 09:15:00'),
+(1003, 'Fatimah Zahra', 'fatimah.z@email.com', '$2y$10$dummy', '016-444-5555', '789 Jalan Bukit, Kuala Lumpur', '2025-01-12 10:45:00'),
+(1004, 'Yasmin Sofiya', 'yasmin.s@email.com', '$2y$10$dummy', '013-666-7777', '321 Jalan Ampang, Kuala Lumpur', '2025-01-13 11:20:00'),
+(1005, 'Leila Nazira', 'leila.n@email.com', '$2y$10$dummy', '017-888-9999', '654 Jalan Kebun, Kuala Lumpur', '2025-01-14 12:30:00'),
+(1006, 'Aiko', 'aiko@gmail.com', '$2y$10$LrI0hQURpIOVuRJQqcIf2OA6FdAb0DRB7Q4GIII3jDRVMQ.lqD7m2', '0183289742', '123 Jump street\nKuala Lumpur, Kuala Lumpur 734232', '2025-12-21 23:17:01');
 
 -- --------------------------------------------------------
 
@@ -210,18 +178,23 @@ INSERT INTO `customer` (`CUSTOMER_ID`, `CUSTOMER_NAME`, `CUSTOMER_EMAIL`, `CUSTO
 CREATE TABLE `designer` (
   `DESIGNER_ID` int(11) NOT NULL,
   `DESIGNER_NAME` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `designer`
 --
 
 INSERT INTO `designer` (`DESIGNER_ID`, `DESIGNER_NAME`) VALUES
-(5, 'Aura Gemstones'),
+(1, 'Sterling Creations Ltd'),
 (2, 'Elegance Jewelry Studio'),
 (3, 'Lumiere Fine Jewelry'),
-(1, 'Sterling Creations Ltd'),
-(4, 'Vintage Vogue Co.');
+(4, 'Vintage Vogue Co.'),
+(5, 'Aura Gemstones'),
+(6, 'Celestial Designs'),
+(7, 'Precious Moments Studio'),
+(8, 'Radiant Jewels Co.'),
+(9, 'Ethereal Crafts Ltd'),
+(10, 'Glamour & Grace Jewelry');
 
 -- --------------------------------------------------------
 
@@ -237,44 +210,51 @@ CREATE TABLE `item` (
   `ITEM_DESCRIPTION` varchar(500) NOT NULL,
   `ITEM_MATERIAL` varchar(100) NOT NULL,
   `ITEM_PRICE` decimal(10,2) NOT NULL,
-  `ITEM_STOCK` int(11) NOT NULL DEFAULT 0,
+  `ITEM_STOCK` int(11) NOT NULL DEFAULT 50,
+  `IS_ENGRAVABLE` tinyint(1) NOT NULL DEFAULT 0,
   `ITEM_IMAGE` varchar(255) DEFAULT NULL,
-  `ITEM_DATE` datetime NOT NULL DEFAULT current_timestamp(),
+  `GALLERY_IMAGES` longtext DEFAULT NULL,
+  `ITEM_TAGS` varchar(500) DEFAULT NULL,
   `PARENT_ID` int(11) DEFAULT NULL,
-  `IS_ENGRAVABLE` tinyint(1) DEFAULT 0,
-  `ITEM_TAGS` varchar(255) DEFAULT NULL
-) ;
+  `ITEM_WEIGHT` decimal(5,2) DEFAULT NULL,
+  `ITEM_SIZE` varchar(50) DEFAULT NULL,
+  `ITEM_COLOR` varchar(100) DEFAULT NULL,
+  `ITEM_ACTIVE` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `item`
 --
 
-INSERT INTO `item` (`ITEM_ID`, `DESIGNER_ID`, `ITEM_CATEGORY`, `ITEM_NAME`, `ITEM_DESCRIPTION`, `ITEM_MATERIAL`, `ITEM_PRICE`, `ITEM_STOCK`, `ITEM_IMAGE`, `ITEM_DATE`, `PARENT_ID`, `IS_ENGRAVABLE`, `ITEM_TAGS`) VALUES
-(2001, 1, 'Necklaces', 'Sterling Silver Heart Necklace', 'Elegant heart pendant', '925 Sterling Silver', 89.99, 45, '/images/products/item_2001.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2002, 1, 'Bracelets', 'Build-Your-Own Charm Bracelet', 'Customizable bracelet', '925 Sterling Silver', 59.99, 30, '/images/products/item_2002.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2003, 2, 'Earrings', 'Pearl Drop Earrings', 'Classic pearl drop', '18K Gold Plating', 65.50, 25, '/images/products/item_2003.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2004, 2, 'Rings', 'Diamond Solitaire Ring', 'Elegant engagement ring', '925 Sterling Silver', 299.99, 12, '/images/products/item_2004.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2005, 1, 'Necklaces', 'Gold Infinity Pendant', 'Modern infinity symbol', '18K Gold Plating', 74.99, 20, '/images/products/item_2005.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2006, 2, 'Bracelets', 'Rose Gold Bangle Bracelet', 'Sleek bangle', 'Rose Gold Plating', 54.99, 35, '/images/products/item_2006.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2007, 1, 'Earrings', 'Cubic Zirconia Studs', 'Sparkling studs', 'Cubic Zirconia', 39.99, 50, '/images/products/item_2007.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2008, 2, 'Rings', 'Moonstone Ring', 'Mystical statement ring', 'Silver & Moonstone', 89.99, 15, '/images/products/item_2008.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2009, 1, 'Necklaces', 'Birthstone Pendant Necklace', 'Personalized pendant', '925 Sterling Silver', 79.99, 28, '/images/products/item_2009.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2010, 2, 'Bracelets', 'Beaded Stretch Bracelet', 'Colorful beads', 'Semi-Precious Beads', 44.99, 40, '/images/products/item_2010.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2011, 3, 'Necklaces', 'Sapphire Teardrop Pendant', 'Deep blue sapphire', '18K White Gold', 249.99, 10, '/images/products/item_2011.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2012, 3, 'Earrings', 'Diamond Halo Studs', '0.5 carat diamond', 'Platinum', 499.99, 5, '/images/products/item_2012.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2013, 4, 'Rings', 'Vintage Ruby Ring', 'Art-deco style', 'Gold Vermeil', 129.50, 8, '/images/products/item_2013.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2014, 4, 'Bracelets', 'Emerald Tennis Bracelet', 'Lab grown emeralds', 'Sterling Silver', 189.00, 15, '/images/products/item_2014.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2015, 5, 'Necklaces', 'Amethyst Crystal Choker', 'Bohemian raw amethyst', 'Leather & Silver', 45.00, 30, '/images/products/item_2015.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2016, 5, 'Rings', 'Turquoise Statement Ring', 'Large turquoise stone', 'Recycled Silver', 65.00, 12, '/images/products/item_2016.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2017, 1, 'Earrings', 'Silver Hoop Earrings', 'Classic large hoop', '925 Sterling Silver', 29.99, 50, '/images/products/item_2017.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2018, 2, 'Necklaces', 'Gold Layered Chain', 'Trendy multi-layer', '14K Gold Plating', 39.99, 40, '/images/products/item_2018.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2019, 3, 'Bracelets', 'Pearl Strand Bracelet', 'Freshwater pearls', 'Silk & Gold', 85.00, 20, '/images/products/item_2019.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2020, 4, 'Rings', 'Opal Signet Ring', 'Modern opal inlay', 'Gold Plated', 55.00, 18, '/images/products/item_2020.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2021, 5, 'Earrings', 'Garnet Drop Earrings', 'Red garnet stones', 'Rose Gold', 95.00, 10, '/images/products/item_2021.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2022, 1, 'Bracelets', 'Minimalist Cuff', 'Simple open cuff', 'Stainless Steel', 25.00, 60, '/images/products/item_2022.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2023, 2, 'Necklaces', 'Locket Necklace', 'Vintage style locket', 'Brass', 35.00, 25, '/images/products/item_2023.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2024, 3, 'Rings', 'Stackable Gold Bands', 'Set of 3 bands', '10K Gold', 110.00, 15, '/images/products/item_2024.jpg', '2025-12-19 22:19:33', NULL, 0, NULL),
-(2025, 4, 'Earrings', 'Blue Topaz Studs', 'Bright blue topaz', 'Sterling Silver', 49.00, 22, '/images/products/item_2025.jpg', '2025-12-19 22:19:33', NULL, 0, NULL);
+INSERT INTO `item` (`ITEM_ID`, `DESIGNER_ID`, `ITEM_CATEGORY`, `ITEM_NAME`, `ITEM_DESCRIPTION`, `ITEM_MATERIAL`, `ITEM_PRICE`, `ITEM_STOCK`, `IS_ENGRAVABLE`, `ITEM_IMAGE`, `GALLERY_IMAGES`, `ITEM_TAGS`, `PARENT_ID`, `ITEM_WEIGHT`, `ITEM_SIZE`, `ITEM_COLOR`, `ITEM_ACTIVE`) VALUES
+(3001, 4, 'Rings', 'Vintage Ruby Ring', 'A timeless statement piece featuring a deep red ruby set in antique-finish gold.', '14k Gold with Ruby', 150.00, 15, 1, '/images/items/ruby_ring.jpg', NULL, 'Vintage, Ruby, Statement', NULL, 4.50, '7', 'Red', 1),
+(3002, 5, 'Rings', 'Turquoise Statement Ring', 'Bold turquoise stone set in a chunky silver bezel.', 'Sterling Silver with Turquoise', 85.00, 20, 0, '/images/items/turquoise_ring.jpg', NULL, 'Boho, Turquoise, Chunky', NULL, 6.20, '8', 'Blue', 1),
+(3003, 1, 'Necklaces', 'Sterling Silver Heart Necklace', 'Delicate heart pendant on a fine silver chain.', '925 Sterling Silver', 45.00, 100, 1, '/images/items/heart_neck.jpg', NULL, 'Minimalist, Heart, Love', NULL, 3.10, '45cm', 'Silver', 1),
+(3004, 3, 'Rings', 'Stackable Gold Bands', 'Set of 3 thin hammered bands, perfect for stacking.', '18k Gold Plated', 120.00, 40, 1, '/images/items/stack_bands.jpg', NULL, 'Minimalist, Set, Gold', NULL, 2.00, '6,7,8', 'Gold', 1),
+(3005, 1, 'Earrings', 'Silver Hoop Earrings', 'Classic medium-sized polished hoops for everyday wear.', '925 Sterling Silver', 30.00, 80, 0, '/images/items/silver_hoops.jpg', NULL, 'Classic, Hoops, Silver', NULL, 4.00, '30mm', 'Silver', 1),
+(3006, 6, 'Necklaces', 'Sapphire Teardrop Pendant', 'Elegant teardrop sapphire surrounded by tiny cubic zirconia.', 'White Gold with Sapphire', 180.00, 10, 0, '/images/items/sapphire_pend.jpg', NULL, 'Elegant, Sapphire, Luxury', NULL, 5.50, '50cm', 'Blue', 1),
+(3007, 5, 'Bracelets', 'Rose Gold Bangle Bracelet', 'Sleek and modern polished bangle with hinge clasp.', '14k Rose Gold', 95.00, 35, 1, '/images/items/rose_bangle.jpg', NULL, 'Modern, Rose Gold, Bangle', NULL, 10.00, 'One Size', 'Rose Gold', 1),
+(3008, 2, 'Bracelets', 'Pearl Strand Bracelet', 'Classic freshwater pearls strung on silk thread.', 'Freshwater Pearl', 60.00, 25, 0, '/images/items/pearl_brace.jpg', NULL, 'Classic, Pearl, Wedding', NULL, 8.00, '18cm', 'White', 1),
+(3009, 2, 'Earrings', 'Pearl Drop Earrings', 'Sophisticated pearl drops on gold hook backings.', 'Gold Vermeil with Pearl', 55.00, 30, 0, '/images/items/pearl_drop.jpg', NULL, 'Elegant, Pearl, Vintage', NULL, 3.50, 'One Size', 'White', 1),
+(3010, 8, 'Rings', 'Opal Signet Ring', 'Mesmerizing opal cabochon set in a classic signet style.', '14k Gold with Opal', 110.00, 12, 1, '/images/items/opal_ring.jpg', NULL, 'Vintage, Opal, Signet', NULL, 5.80, '7', 'Iridescent', 1),
+(3011, 9, 'Rings', 'Moonstone Ring', 'Ethereal moonstone gem that catches the light.', 'Sterling Silver with Moonstone', 75.00, 18, 0, '/images/items/moonstone_ring.jpg', NULL, 'Boho, Moonstone, Magic', NULL, 3.90, '6', 'White', 1),
+(3012, 1, 'Bracelets', 'Minimalist Cuff', 'Simple open cuff design, adjustable fit.', 'Sterling Silver', 40.00, 60, 1, '/images/items/min_cuff.jpg', NULL, 'Minimalist, Cuff, Silver', NULL, 6.00, 'Adjustable', 'Silver', 1),
+(3013, 4, 'Necklaces', 'Locket Necklace', 'Vintage-inspired oval locket that opens to hold a photo.', 'Gold Plated Brass', 65.00, 22, 1, '/images/items/locket.jpg', NULL, 'Vintage, Locket, Memory', NULL, 7.50, '50cm', 'Gold', 1),
+(3014, 10, 'Necklaces', 'Gold Layered Chain', 'Pre-layered duo chain necklace for an instant stacked look.', '18k Gold Plated', 80.00, 45, 0, '/images/items/layer_chain.jpg', NULL, 'Trendy, Layered, Gold', NULL, 8.20, '40cm/45cm', 'Gold', 1),
+(3015, 3, 'Necklaces', 'Gold Infinity Pendant', 'Symbol of everlasting love on a whisper-thin chain.', '14k Gold', 70.00, 55, 0, '/images/items/infinity.jpg', NULL, 'Symbolic, Love, Gold', NULL, 2.50, '45cm', 'Gold', 1),
+(3016, 7, 'Earrings', 'Garnet Drop Earrings', 'Deep red garnets in a teardrop cut.', 'Gold Plated with Garnet', 90.00, 15, 0, '/images/items/garnet_drop.jpg', NULL, 'Gemstone, Garnet, Red', NULL, 4.20, 'One Size', 'Red', 1),
+(3017, 8, 'Bracelets', 'Emerald Tennis Bracelet', 'Luxurious line of emerald simulants.', 'Sterling Silver with Emerald Simulant', 250.00, 8, 0, '/images/items/emerald_tennis.jpg', NULL, 'Luxury, Tennis, Emerald', NULL, 11.00, '17cm', 'Green', 1),
+(3018, 3, 'Rings', 'Diamond Solitaire Ring', 'Premium 0.5ct conflict-free diamond solitaire.', '18k White Gold with Diamond', 500.00, 5, 1, '/images/items/dia_solitaire.jpg', NULL, 'Wedding, Luxury, Diamond', NULL, 4.00, '6', 'Silver', 1),
+(3019, 3, 'Earrings', 'Diamond Halo Studs', 'Brilliant round diamonds surrounded by a halo of sparkle.', '14k White Gold with Diamond', 300.00, 10, 0, '/images/items/halo_studs.jpg', NULL, 'Luxury, Diamond, Studs', NULL, 2.00, 'One Size', 'Silver', 1),
+(3020, 1, 'Earrings', 'Cubic Zirconia Studs', 'Affordable sparkle suitable for daily wear.', 'Sterling Silver with CZ', 25.00, 150, 0, '/images/items/cz_studs.jpg', NULL, 'Basic, Sparkle, Silver', NULL, 1.50, 'One Size', 'Clear', 1),
+(3021, 9, 'Bracelets', 'Build-Your-Own Charm Bracelet', 'Base chain link bracelet ready for your charm collection.', 'Sterling Silver', 50.00, 200, 0, '/images/items/charm_base.jpg', NULL, 'Charms, DIY, Silver', NULL, 9.00, 'Adjustable', 'Silver', 1),
+(3022, 6, 'Earrings', 'Blue Topaz Studs', 'Bright blue topaz gems in a simple 4-prong setting.', 'Sterling Silver', 45.00, 30, 0, '/images/products/var_1766316071_0.png', '[\"\\/images\\/products\\/base_1766316071_0.png\",\"\\/images\\/products\\/base_1766316071_1.png\",\"\\/images\\/products\\/base_1766316071_2.png\"]', 'Color, Topaz, Blue', 73680, 2.10, 'One Size', 'Blue', 1),
+(3023, 10, 'Necklaces', 'Birthstone Pendant Necklace', 'Personalized birthstone gem on a dainty chain.', 'Gold Plated', 55.00, 60, 0, '/images/products/var_1766315638_0.png', '[\"\\/images\\/products\\/base_1766315638_0.png\",\"\\/images\\/products\\/base_1766315638_1.png\",\"\\/images\\/products\\/base_1766315638_2.png\"]', 'Gift, Personalized, Gold', 69390, 3.00, '45cm', 'Multi', 1),
+(3024, 9, 'Bracelets', 'Beaded Stretch Bracelet', 'Casual beaded bracelet on durable elastic cord.', 'Glass Beads', 20.00, 100, 0, '/images/products/var_1766314590_0.png', '[\"\\/images\\/products\\/base_1766314590_0.png\",\"\\/images\\/products\\/base_1766314590_1.png\",\"\\/images\\/products\\/base_1766314590_2.png\"]', 'Boho, Casual, Colorful', NULL, 5.00, 'Stretch', 'Multi', 1),
+(3025, 5, 'Necklaces', 'Amethyst Crystal Choker', 'Raw amethyst crystal point on a velvet choker.', 'Sterling Silver', 35.00, 40, 0, '/images/products/var_1766313385_0.png', '[\"\\/images\\/products\\/base_1766313117_0.png\",\"\\/images\\/products\\/base_1766313117_1.png\",\"\\/images\\/products\\/base_1766313117_2.png\"]', 'Women, Classic, Boho, Waterproof, Hypoallergenic, Tarnish-Free, Adjustable, Crystal, Choker', 11304, 4.00, '12 inch', 'Purple', 1),
+(3034, 5, 'Necklaces', 'Amethyst Crystal Choker', 'Raw amethyst crystal point on a velvet choker.', '18k Gold Plated', 35.00, 40, 0, '/images/products/var_1766313753_1.png', '[\"\\/images\\/products\\/base_1766313117_0.png\",\"\\/images\\/products\\/base_1766313117_1.png\",\"\\/images\\/products\\/base_1766313117_2.png\"]', 'Women, Classic, Boho, Waterproof, Hypoallergenic, Tarnish-Free, Adjustable, Crystal, Choker', 11304, NULL, NULL, NULL, 1),
+(3036, 10, 'Necklaces', 'Birthstone Pendant Necklace', 'Personalized birthstone gem on a dainty chain.', 'Sterling Silver', 55.00, 60, 0, '/images/products/var_1766315638_1.png', '[\"\\/images\\/products\\/base_1766315638_0.png\",\"\\/images\\/products\\/base_1766315638_1.png\",\"\\/images\\/products\\/base_1766315638_2.png\"]', 'Gift, Personalized, Gold', 69390, NULL, NULL, NULL, 1),
+(3037, 6, 'Earrings', 'Blue Topaz Studs', 'Bright blue topaz gems in a simple 4-prong setting.', '18k Gold Plated', 45.00, 30, 0, '/images/products/var_1766316071_1.png', '[\"\\/images\\/products\\/base_1766316071_0.png\",\"\\/images\\/products\\/base_1766316071_1.png\",\"\\/images\\/products\\/base_1766316071_2.png\"]', 'Color, Topaz, Blue', 73680, NULL, NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -285,23 +265,15 @@ INSERT INTO `item` (`ITEM_ID`, `DESIGNER_ID`, `ITEM_CATEGORY`, `ITEM_NAME`, `ITE
 CREATE TABLE `itemcharm` (
   `ITEM_ID` int(11) NOT NULL,
   `CHARM_ID` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `itemcharm`
 --
 
 INSERT INTO `itemcharm` (`ITEM_ID`, `CHARM_ID`) VALUES
-(2002, 11001),
-(2002, 11002),
-(2002, 11003),
-(2002, 11004),
-(2002, 11005),
-(2002, 11006),
-(2002, 11007),
-(2002, 11008),
-(2006, 11001),
-(2006, 11002);
+(3021, 11001),
+(3021, 11002);
 
 -- --------------------------------------------------------
 
@@ -313,39 +285,64 @@ CREATE TABLE `item_gallery` (
   `GALLERY_ID` int(11) NOT NULL,
   `ITEM_ID` int(11) NOT NULL,
   `IMAGE_URL` varchar(255) NOT NULL,
-  `IMAGE_TYPE` varchar(20) DEFAULT 'main'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `IMAGE_TYPE` varchar(50) NOT NULL DEFAULT 'main'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `item_gallery`
 --
 
 INSERT INTO `item_gallery` (`GALLERY_ID`, `ITEM_ID`, `IMAGE_URL`, `IMAGE_TYPE`) VALUES
-(1, 2001, '/images/products/item_2001.jpg', 'main'),
-(2, 2002, '/images/products/item_2002.jpg', 'main'),
-(3, 2003, '/images/products/item_2003.jpg', 'main'),
-(4, 2004, '/images/products/item_2004.jpg', 'main'),
-(5, 2005, '/images/products/item_2005.jpg', 'main'),
-(6, 2006, '/images/products/item_2006.jpg', 'main'),
-(7, 2007, '/images/products/item_2007.jpg', 'main'),
-(8, 2008, '/images/products/item_2008.jpg', 'main'),
-(9, 2009, '/images/products/item_2009.jpg', 'main'),
-(10, 2010, '/images/products/item_2010.jpg', 'main'),
-(11, 2011, '/images/products/item_2011.jpg', 'main'),
-(12, 2012, '/images/products/item_2012.jpg', 'main'),
-(13, 2013, '/images/products/item_2013.jpg', 'main'),
-(14, 2014, '/images/products/item_2014.jpg', 'main'),
-(15, 2015, '/images/products/item_2015.jpg', 'main'),
-(16, 2016, '/images/products/item_2016.jpg', 'main'),
-(17, 2017, '/images/products/item_2017.jpg', 'main'),
-(18, 2018, '/images/products/item_2018.jpg', 'main'),
-(19, 2019, '/images/products/item_2019.jpg', 'main'),
-(20, 2020, '/images/products/item_2020.jpg', 'main'),
-(21, 2021, '/images/products/item_2021.jpg', 'main'),
-(22, 2022, '/images/products/item_2022.jpg', 'main'),
-(23, 2023, '/images/products/item_2023.jpg', 'main'),
-(24, 2024, '/images/products/item_2024.jpg', 'main'),
-(25, 2025, '/images/products/item_2025.jpg', 'main');
+(1, 3001, '/images/items/ruby_ring_main.jpg', 'main'),
+(2, 3002, '/images/items/turquoise_ring_main.jpg', 'main'),
+(3, 3003, '/images/items/heart_neck_main.jpg', 'main'),
+(4, 3004, '/images/items/stack_bands_main.jpg', 'main'),
+(5, 3005, '/images/items/silver_hoops_main.jpg', 'main'),
+(6, 3006, '/images/items/sapphire_pend_main.jpg', 'main'),
+(7, 3007, '/images/items/rose_bangle_main.jpg', 'main'),
+(8, 3008, '/images/items/pearl_brace_main.jpg', 'main'),
+(9, 3009, '/images/items/pearl_drop_main.jpg', 'main'),
+(10, 3010, '/images/items/opal_ring_main.jpg', 'main'),
+(11, 3011, '/images/items/moonstone_ring_main.jpg', 'main'),
+(12, 3012, '/images/items/min_cuff_main.jpg', 'main'),
+(13, 3013, '/images/items/locket_main.jpg', 'main'),
+(14, 3014, '/images/items/layer_chain_main.jpg', 'main'),
+(15, 3015, '/images/items/infinity_main.jpg', 'main'),
+(16, 3016, '/images/items/garnet_drop_main.jpg', 'main'),
+(17, 3017, '/images/items/emerald_tennis_main.jpg', 'main'),
+(18, 3018, '/images/items/dia_solitaire_main.jpg', 'main'),
+(19, 3019, '/images/items/halo_studs_main.jpg', 'main'),
+(20, 3020, '/images/items/cz_studs_main.jpg', 'main'),
+(21, 3021, '/images/items/charm_base_main.jpg', 'main'),
+(22, 3022, '/images/items/topaz_studs_main.jpg', 'main'),
+(23, 3023, '/images/items/birthstone_main.jpg', 'main'),
+(24, 3024, '/images/items/beaded_stretch_main.jpg', 'main'),
+(25, 3025, '/images/items/amethyst_choker_main.jpg', 'main'),
+(32, 3001, '/images/items/ruby_ring_hover.jpg', 'hover'),
+(33, 3002, '/images/items/turquoise_ring_hover.jpg', 'hover'),
+(34, 3003, '/images/items/heart_neck_hover.jpg', 'hover'),
+(35, 3004, '/images/items/stack_bands_hover.jpg', 'hover'),
+(36, 3005, '/images/items/silver_hoops_hover.jpg', 'hover'),
+(37, 3006, '/images/items/sapphire_pend_hover.jpg', 'hover'),
+(38, 3007, '/images/items/rose_bangle_hover.jpg', 'hover'),
+(39, 3008, '/images/items/pearl_brace_hover.jpg', 'hover'),
+(40, 3009, '/images/items/pearl_drop_hover.jpg', 'hover'),
+(41, 3010, '/images/items/opal_ring_hover.jpg', 'hover'),
+(42, 3011, '/images/items/moonstone_ring_hover.jpg', 'hover'),
+(43, 3012, '/images/items/min_cuff_hover.jpg', 'hover'),
+(44, 3013, '/images/items/locket_hover.jpg', 'hover'),
+(45, 3014, '/images/items/layer_chain_hover.jpg', 'hover'),
+(46, 3015, '/images/items/infinity_hover.jpg', 'hover'),
+(47, 3016, '/images/items/garnet_drop_hover.jpg', 'hover'),
+(48, 3017, '/images/items/emerald_tennis_hover.jpg', 'hover'),
+(49, 3018, '/images/items/dia_solitaire_hover.jpg', 'hover'),
+(50, 3019, '/images/items/halo_studs_hover.jpg', 'hover'),
+(51, 3020, '/images/items/cz_studs_hover.jpg', 'hover'),
+(52, 3021, '/images/items/charm_base_hover.jpg', 'hover'),
+(53, 3022, '/images/items/topaz_studs_hover.jpg', 'hover'),
+(54, 3023, '/images/items/birthstone_hover.jpg', 'hover'),
+(55, 3024, '/images/items/beaded_stretch_hover.jpg', 'hover'),
+(56, 3025, '/images/items/amethyst_choker_hover.jpg', 'hover');
 
 -- --------------------------------------------------------
 
@@ -359,17 +356,15 @@ CREATE TABLE `order` (
   `CART_ID` int(11) DEFAULT NULL,
   `ORDER_DATE` datetime NOT NULL DEFAULT current_timestamp(),
   `ORDER_STATUS` varchar(20) NOT NULL DEFAULT 'pending',
-  `ORDER_TOTALAMOUNT` decimal(10,2) NOT NULL
-) ;
+  `ORDER_TOTAL` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `order`
 --
 
-INSERT INTO `order` (`ORDER_ID`, `CUSTOMER_ID`, `CART_ID`, `ORDER_DATE`, `ORDER_STATUS`, `ORDER_TOTALAMOUNT`) VALUES
-(6001, 1003, 4003, '2025-01-20 14:30:00', 'shipped', 149.98),
-(6002, 1008, 4008, '2025-01-21 15:45:00', 'confirmed', 189.97),
-(6003, 1001, 4001, '2025-01-22 16:20:00', 'pending', 245.48);
+INSERT INTO `order` (`ORDER_ID`, `CUSTOMER_ID`, `CART_ID`, `ORDER_DATE`, `ORDER_STATUS`, `ORDER_TOTAL`) VALUES
+(7001, 1002, 5002, '2025-02-01 10:00:00', 'completed', 82.00);
 
 -- --------------------------------------------------------
 
@@ -381,19 +376,17 @@ CREATE TABLE `payment` (
   `PAYMENT_ID` int(11) NOT NULL,
   `ORDER_ID` int(11) NOT NULL,
   `PAYMENT_DATE` datetime NOT NULL DEFAULT current_timestamp(),
-  `PAYMENT_AMOUNT` decimal(10,2) NOT NULL,
   `PAYMENT_METHOD` varchar(50) NOT NULL,
-  `PAYMENT_STATUS` varchar(20) NOT NULL DEFAULT 'pending'
-) ;
+  `PAYMENT_STATUS` varchar(20) NOT NULL DEFAULT 'pending',
+  `PAYMENT_AMOUNT` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `payment`
 --
 
-INSERT INTO `payment` (`PAYMENT_ID`, `ORDER_ID`, `PAYMENT_DATE`, `PAYMENT_AMOUNT`, `PAYMENT_METHOD`, `PAYMENT_STATUS`) VALUES
-(8001, 6001, '2025-01-20 14:35:00', 149.98, 'CreditCard', 'successful'),
-(8002, 6002, '2025-01-21 15:50:00', 189.97, 'OnlineBanking', 'successful'),
-(8003, 6003, '2025-01-22 16:25:00', 245.48, 'EWallet', 'successful');
+INSERT INTO `payment` (`PAYMENT_ID`, `ORDER_ID`, `PAYMENT_DATE`, `PAYMENT_METHOD`, `PAYMENT_STATUS`, `PAYMENT_AMOUNT`) VALUES
+(9001, 7001, '2025-02-01 10:05:00', 'CreditCard', 'completed', 82.00);
 
 -- --------------------------------------------------------
 
@@ -402,28 +395,23 @@ INSERT INTO `payment` (`PAYMENT_ID`, `ORDER_ID`, `PAYMENT_DATE`, `PAYMENT_AMOUNT
 --
 
 CREATE TABLE `review` (
+  `REVIEW_ID` int(11) NOT NULL,
   `CUSTOMER_ID` int(11) NOT NULL,
   `ITEM_ID` int(11) NOT NULL,
-  `REVIEW_RATING` decimal(2,1) NOT NULL,
-  `REVIEW_COMMENT` text NOT NULL,
-  `REVIEW_DATE` datetime NOT NULL DEFAULT current_timestamp()
-) ;
+  `REVIEW_DATE` datetime NOT NULL DEFAULT current_timestamp(),
+  `REVIEW_RATING` int(11) NOT NULL CHECK (`REVIEW_RATING` >= 1 and `REVIEW_RATING` <= 5),
+  `REVIEW_TEXT` varchar(500) DEFAULT NULL,
+  `REVIEW_ACTIVE` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `review`
 --
 
-INSERT INTO `review` (`CUSTOMER_ID`, `ITEM_ID`, `REVIEW_RATING`, `REVIEW_COMMENT`, `REVIEW_DATE`) VALUES
-(1001, 2001, 5.0, 'Beautiful!', '2025-01-20 10:30:00'),
-(1002, 2001, 4.5, 'Very nice.', '2025-01-21 11:15:00'),
-(1003, 2003, 5.0, 'Stunning.', '2025-01-22 12:45:00'),
-(1004, 2002, 4.0, 'Good quality.', '2025-01-23 13:20:00'),
-(1005, 2005, 5.0, 'Gorgeous.', '2025-01-24 14:30:00'),
-(1006, 2004, 4.5, 'Satisfied.', '2025-01-25 15:45:00'),
-(1007, 2006, 5.0, 'Perfect.', '2025-01-26 16:20:00'),
-(1008, 2007, 4.0, 'Sparkly.', '2025-01-27 17:10:00'),
-(1009, 2009, 5.0, 'Perfect.', '2025-01-28 18:30:00'),
-(1010, 2010, 4.5, 'Colorful.', '2025-01-29 19:00:00');
+INSERT INTO `review` (`REVIEW_ID`, `CUSTOMER_ID`, `ITEM_ID`, `REVIEW_DATE`, `REVIEW_RATING`, `REVIEW_TEXT`, `REVIEW_ACTIVE`) VALUES
+(1, 1002, 3021, '2025-02-05 14:00:00', 5, 'Love that I can add my own charms!', 1),
+(2, 1001, 3001, '2025-01-20 09:30:00', 4, 'The ruby is darker than expected but very beautiful.', 1),
+(3, 1003, 3012, '2025-01-25 11:15:00', 5, 'Simple and perfect fit.', 1);
 
 --
 -- Indexes for dumped tables
@@ -441,7 +429,7 @@ ALTER TABLE `admin`
 --
 ALTER TABLE `cart`
   ADD PRIMARY KEY (`CART_ID`),
-  ADD UNIQUE KEY `CUSTOMER_ID` (`CUSTOMER_ID`);
+  ADD KEY `IDX_CART_CUSTOMER` (`CUSTOMER_ID`);
 
 --
 -- Indexes for table `cartitem`
@@ -463,23 +451,20 @@ ALTER TABLE `cartitem_charm`
 -- Indexes for table `charm`
 --
 ALTER TABLE `charm`
-  ADD PRIMARY KEY (`CHARM_ID`),
-  ADD UNIQUE KEY `CHARM_NAME` (`CHARM_NAME`);
+  ADD PRIMARY KEY (`CHARM_ID`);
 
 --
 -- Indexes for table `customer`
 --
 ALTER TABLE `customer`
   ADD PRIMARY KEY (`CUSTOMER_ID`),
-  ADD UNIQUE KEY `CUSTOMER_EMAIL` (`CUSTOMER_EMAIL`),
-  ADD KEY `IDX_CUST_EMAIL` (`CUSTOMER_EMAIL`);
+  ADD UNIQUE KEY `CUSTOMER_EMAIL` (`CUSTOMER_EMAIL`);
 
 --
 -- Indexes for table `designer`
 --
 ALTER TABLE `designer`
-  ADD PRIMARY KEY (`DESIGNER_ID`),
-  ADD UNIQUE KEY `DESIGNER_NAME` (`DESIGNER_NAME`);
+  ADD PRIMARY KEY (`DESIGNER_ID`);
 
 --
 -- Indexes for table `item`
@@ -487,8 +472,7 @@ ALTER TABLE `designer`
 ALTER TABLE `item`
   ADD PRIMARY KEY (`ITEM_ID`),
   ADD KEY `DESIGNER_ID` (`DESIGNER_ID`),
-  ADD KEY `IDX_ITEM_NAME` (`ITEM_NAME`),
-  ADD KEY `IDX_ITEM_CATEGORY` (`ITEM_CATEGORY`);
+  ADD KEY `IDX_PARENT_ID` (`PARENT_ID`);
 
 --
 -- Indexes for table `itemcharm`
@@ -510,8 +494,6 @@ ALTER TABLE `item_gallery`
 ALTER TABLE `order`
   ADD PRIMARY KEY (`ORDER_ID`),
   ADD KEY `CART_ID` (`CART_ID`),
-  ADD KEY `IDX_ORDER_DATE` (`ORDER_DATE`),
-  ADD KEY `IDX_ORDER_STATUS` (`ORDER_STATUS`),
   ADD KEY `FK_ORDER_CUSTOMER` (`CUSTOMER_ID`);
 
 --
@@ -525,7 +507,8 @@ ALTER TABLE `payment`
 -- Indexes for table `review`
 --
 ALTER TABLE `review`
-  ADD PRIMARY KEY (`CUSTOMER_ID`,`ITEM_ID`),
+  ADD PRIMARY KEY (`REVIEW_ID`),
+  ADD KEY `CUSTOMER_ID` (`CUSTOMER_ID`),
   ADD KEY `ITEM_ID` (`ITEM_ID`);
 
 --
@@ -542,61 +525,67 @@ ALTER TABLE `admin`
 -- AUTO_INCREMENT for table `cart`
 --
 ALTER TABLE `cart`
-  MODIFY `CART_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `CART_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5005;
 
 --
 -- AUTO_INCREMENT for table `cartitem`
 --
 ALTER TABLE `cartitem`
-  MODIFY `CARTITEM_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `CARTITEM_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `cartitem_charm`
 --
 ALTER TABLE `cartitem_charm`
-  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `charm`
 --
 ALTER TABLE `charm`
-  MODIFY `CHARM_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `CHARM_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11011;
 
 --
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `CUSTOMER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1031;
+  MODIFY `CUSTOMER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1007;
 
 --
 -- AUTO_INCREMENT for table `designer`
 --
 ALTER TABLE `designer`
-  MODIFY `DESIGNER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `DESIGNER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
-  MODIFY `ITEM_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ITEM_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3038;
 
 --
 -- AUTO_INCREMENT for table `item_gallery`
 --
 ALTER TABLE `item_gallery`
-  MODIFY `GALLERY_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+  MODIFY `GALLERY_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT for table `order`
 --
 ALTER TABLE `order`
-  MODIFY `ORDER_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `ORDER_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7002;
 
 --
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `PAYMENT_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9002;
+
+--
+-- AUTO_INCREMENT for table `review`
+--
+ALTER TABLE `review`
+  MODIFY `REVIEW_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Constraints for dumped tables
@@ -646,7 +635,6 @@ ALTER TABLE `item_gallery`
 --
 ALTER TABLE `order`
   ADD CONSTRAINT `FK_ORDER_CUSTOMER` FOREIGN KEY (`CUSTOMER_ID`) REFERENCES `customer` (`CUSTOMER_ID`),
-  ADD CONSTRAINT `order_ibfk_1` FOREIGN KEY (`CUSTOMER_ID`) REFERENCES `customer` (`CUSTOMER_ID`),
   ADD CONSTRAINT `order_ibfk_2` FOREIGN KEY (`CART_ID`) REFERENCES `cart` (`CART_ID`) ON DELETE SET NULL;
 
 --
