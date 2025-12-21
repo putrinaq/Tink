@@ -6,6 +6,9 @@ require_once 'config.php';
 $sql = "SELECT * FROM DESIGNER ORDER BY DESIGNER_NAME ASC";
 $stmt = $pdo->query($sql);
 $designers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// CONFIG: Default Dummy Image (Use a local path like 'assets/img/placeholder.jpg' or a URL)
+$dummyImage = "https://placehold.co/400x400/F5F5F5/CCCCCC?text=No+Image";
 ?>
 
 <!DOCTYPE html>
@@ -15,14 +18,12 @@ $designers = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Our Designers | TINK</title>
-
     <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
     <link rel="stylesheet" href="assets/css/style.css">
-    <link rel="stylesheet" href="assets/css/catalog.css">
-    <link rel="stylesheet" href="assets/css/designers.css">
+    <link rel="stylesheet" href="assets/css/designer.css">
+
 
     <style>
         .designers-container {
@@ -52,30 +53,46 @@ $designers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             <?php if (count($designers) > 0): ?>
                 <?php foreach ($designers as $designer):
-                    // 2. FETCH TOP 4 ITEMS FOR THIS DESIGNER
+                    // 2. FETCH TOP 4 ITEM IMAGES
                     $imgSql = "SELECT ITEM_IMAGE FROM ITEM WHERE DESIGNER_ID = ? AND ITEM_ACTIVE = 1 LIMIT 4";
                     $imgStmt = $pdo->prepare($imgSql);
                     $imgStmt->execute([$designer['DESIGNER_ID']]);
-                    $previewImages = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
+                    $fetchedImages = $imgStmt->fetchAll(PDO::FETCH_COLUMN);
 
-                    // Count total items
+                    // 3. LOGIC: HANDLE PREVIEW IMAGES
+                    // Filter out empty images and replace with dummy if needed
+                    $previewImages = [];
+                    foreach ($fetchedImages as $img) {
+                        if (!empty($img)) {
+                            $previewImages[] = $img;
+                        } else {
+                            $previewImages[] = $dummyImage;
+                        }
+                    }
+
+                    // Count total for display text
                     $countSql = "SELECT COUNT(*) FROM ITEM WHERE DESIGNER_ID = ? AND ITEM_ACTIVE = 1";
                     $countStmt = $pdo->prepare($countSql);
                     $countStmt->execute([$designer['DESIGNER_ID']]);
                     $totalItems = $countStmt->fetchColumn();
+
+                    // 4. LOGIC: LAYOUT CLASS (Grow Logic)
+                    $count = count($previewImages);
+
+                    // If 0 items, force 1 dummy image so the card isn't empty
+                    if ($count == 0) {
+                        $previewImages[] = $dummyImage;
+                        $count = 1;
+                    }
+
+                    $layoutClass = "layout-" . $count; // e.g., 'layout-2'
                 ?>
                     <a href="designers-selected.php?id=<?= $designer['DESIGNER_ID'] ?>" class="designer-card">
 
-                        <div class="designer-preview">
-                            <?php
-                            // Loop 4 times to fill the grid (even if empty)
-                            for ($i = 0; $i < 4; $i++):
-                                if (isset($previewImages[$i])): ?>
-                                    <img src="<?= htmlspecialchars($previewImages[$i]) ?>" alt="Product Preview">
-                                <?php else: ?>
-                                    <div class="preview-placeholder"><i class="fa-solid fa-gem"></i></div>
-                            <?php endif;
-                            endfor; ?>
+                        <div class="designer-preview <?= $layoutClass ?>">
+                            <?php foreach ($previewImages as $imgSrc): ?>
+                                <img src="<?= htmlspecialchars($imgSrc) ?>" alt="Item Preview">
+                            <?php endforeach; ?>
                         </div>
 
                         <div class="designer-info">
@@ -94,33 +111,7 @@ $designers = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         </div>
     </div>
-
-    <footer class="site-footer">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4>INFO</h4>
-                <ul>
-                    <li>Terms</li>
-                    <li>Privacy</li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>CONTACT</h4>
-                <ul>
-                    <li>013-8974568</li>
-                    <li>tink@gmail.com</li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>FOLLOW</h4>
-                <ul>
-                    <li>Facebook</li>
-                    <li>Instagram</li>
-                </ul>
-            </div>
-        </div>
-        <div style="text-align:center; margin-top:40px; font-size:0.8rem; color:#888;">&copy; 2025 Tink.</div>
-    </footer>
+    <?php include 'components/footer.php'; ?>
 
 </body>
 

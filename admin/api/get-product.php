@@ -1,51 +1,41 @@
 <?php
+require_once '../../config.php'; // Adjust path to config.php as needed
 
-/**
- * API Endpoint: Get Product Data
- * Path: /admin/api/get-product.php
- * Used for: Loading product details in edit modal
- */
+header('Content-Type: application/json');
 
-require_once '../../config.php';
-// session_start();
+$item_id = intval($_GET['item_id'] ?? 0);
 
-// // Check admin authentication
-// if (!isset($_SESSION['admin_id'])) {
-//     http_response_code(401);
-//     echo json_encode(['error' => 'Unauthorized']);
-//     exit;
-// }
-
-// Validate request
-if (!isset($_GET['item_id'])) {
-    http_response_code(400);
-    echo json_encode(['error' => 'Missing item_id parameter']);
+if (!$item_id) {
+    echo json_encode(['error' => 'Invalid ID']);
     exit;
 }
 
-$item_id = intval($_GET['item_id']);
+// 1. Get the requested item first to check its links
+$stmt = $pdo->prepare("SELECT * FROM ITEM WHERE ITEM_ID = ?");
+$stmt->execute([$item_id]);
+$item = $stmt->fetch(PDO::FETCH_ASSOC);
 
-try {
-    // Fetch product
-    $stmt = $pdo->prepare("
-        SELECT i.*, d.DESIGNER_ID 
-        FROM ITEM i
-        JOIN DESIGNER d ON i.DESIGNER_ID = d.DESIGNER_ID
-        WHERE i.ITEM_ID = ?
-    ");
-    $stmt->execute([$item_id]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$product) {
-        http_response_code(404);
-        echo json_encode(['error' => 'Product not found']);
-        exit;
-    }
-
-    // Return product data
-    header('Content-Type: application/json');
-    echo json_encode($product);
-} catch (Exception $e) {
-    http_response_code(500);
-    echo json_encode(['error' => 'Database error: ' . $e->getMessage()]);
+if (!$item) {
+    echo json_encode(['error' => 'Not found']);
+    exit;
 }
+
+// 2. Determine the Group ID
+// If it has a PARENT_ID, that's the group. If not, use its own ID (for single items).
+$group_key = $item['PARENT_ID'] ?? $item['ITEM_ID'];
+
+// 3. Fetch ALL items in this group
+// We check if an item IS the group key OR belongs TO the group key
+$stmt = $pdo->prepare("
+    SELECT * FROM ITEM 
+    WHERE ITEM_ID = ? 
+    OR PARENT_ID = ? 
+    OR (PARENT_ID IS NULL AND ITEM_ID = ?)
+    ORDER BY ITEM_ID ASC
+");
+// We pass the key 3 times to cover all logic cases
+$stmt->execute([$group_key, $group_key, $group_key]);
+$variants = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Return array of items (even if it's just 1)
+echo json_encode($variants);

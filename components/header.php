@@ -19,7 +19,6 @@ $navCategories = [
     'NECKLACES' => 'Necklaces',
     'EARRINGS'  => 'Earrings',
     'RINGS'     => 'Rings',
-    'CHARMS'    => 'Charms'
 ];
 ?>
 

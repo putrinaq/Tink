@@ -268,32 +268,7 @@ $current_sort_label = isset($sort_labels[$sort]) ? $sort_labels[$sort] : $sort_l
         </div>
     </div>
 
-    <footer class="site-footer">
-        <div class="footer-grid">
-            <div class="footer-col">
-                <h4>INFO</h4>
-                <ul>
-                    <li>Terms</li>
-                    <li>Privacy</li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>CONTACT</h4>
-                <ul>
-                    <li>013-8974568</li>
-                    <li>tink@gmail.com</li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>FOLLOW</h4>
-                <ul>
-                    <li>Facebook</li>
-                    <li>Instagram</li>
-                </ul>
-            </div>
-        </div>
-        <div style="text-align:center; margin-top:40px; font-size:0.8rem; color:#888;">&copy; 2025 Tink.</div>
-    </footer>
+    <?php include 'components/footer.php'; ?>
 
     <script>
         // 1. Sidebar Toggle
