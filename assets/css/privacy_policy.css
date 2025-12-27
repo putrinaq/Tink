@@ -1,0 +1,85 @@
+/* ===== Layout Fix ===== */
+.privacy-main-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    padding-top: 120px; /* matches fixed header height */
+    background-color: #FBF4E4;
+}
+
+/* ===== Base ===== */
+body {
+    margin: 0;
+    background-color: #FBF4E4;
+}
+
+/* ===== Container ===== */
+.container.privacy-page {
+    max-width: 850px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    color: #001F3F;
+    text-align: justify;
+    font-family: "Helvetica Now Var", "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ===== Page Header ===== */
+.container-head {
+    text-align: center;
+    border-bottom: 1px solid rgba(0, 31, 63, 0.1);
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+}
+
+.brand-logo {
+    font-size: 14px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    display: block;
+    margin-bottom: 10px;
+    opacity: 0.7;
+}
+
+.container-head h1 {
+    margin: 0;
+    font-size: 32px;
+    letter-spacing: 10px;
+    text-transform: uppercase;
+    margin-right: -10px; /* optical centering */
+}
+
+.last-revised {
+    font-size: 11px;
+    opacity: 0.5;
+    margin-top: 15px;
+}
+
+/* ===== Content ===== */
+.policy-body h2 {
+    margin-top: 40px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    border-left: 3px solid #001F3F;
+    padding-left: 15px;
+}
+
+.policy-body p,
+.policy-body li {
+    line-height: 1.8;
+    margin-bottom: 15px;
+    padding-left: 15px;
+}
+
+.highlight {
+    font-weight: 700;
+}
+
+/* ===== Footer ===== */
+.policy-footer {
+    margin-top: 60px;
+    padding-top: 30px;
+    border-top: 1px solid rgba(0, 31, 63, 0.1);
+    text-align: center;
+    font-size: 12px;
+    opacity: 0.6;
+}
